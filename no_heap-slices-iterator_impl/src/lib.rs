@@ -19,7 +19,8 @@ pub enum Rna<'a> {
 }
 
 impl<'a> Dna<'a> {
-    /// Create a new instance with given DNA nucleotides. On error return [`Err`] with a 0-based
+    /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
+    /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(dna: &'a str) -> Result<Self, usize> {
         match shared::check_dna(dna) {
@@ -38,7 +39,9 @@ impl<'a> Dna<'a> {
 }
 
 impl<'a> Rna<'a> {
-    /// Create a new instance with given RNA nucleotides. On error return [`Err`] with a 0-based
+    /// Create a new [`Rna`] instance with given RNA nucleotides -[`Rna::GivenNucleotides`] variant.
+    /// If `rna` is valid, return  
+    /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(rna: &'a str) -> Result<Self, usize> {
         match shared::check_rna(rna) {
@@ -47,7 +50,8 @@ impl<'a> Rna<'a> {
         }
     }
 
-    /// Use together with [`Rna::is_dna_based`].
+    /// Get the stored nucleotides (RNA for[Rna::GivenNucleotides], or DNA for [Rna::DnaBased]). Use
+    /// together with [`Rna::is_dna_based`].
     fn stored_nucleotides(&self) -> &'a str {
         match *self {
             Self::GivenNucleotides(rna) => rna,
@@ -83,7 +87,7 @@ impl<'a> PartialEq for Rna<'a> {
         self.iter().eq(other.iter())
     }
 }
-/// Not necessary, but valid.
+/// Not necessary for our purpose, but valid.
 impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {

@@ -1,6 +1,6 @@
 [package]
 edition = "2021"
-name = "rna-transcription"
+name = "no_heap-slices-iterator_impl"
 version = "1.0.0"
 [dependencies]
 shared = { path = "../shared" }

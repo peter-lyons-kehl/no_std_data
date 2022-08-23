@@ -20,7 +20,8 @@ pub enum Rna<'a> {
 }
 
 impl<'a> Dna<'a> {
-    /// Create a new instance with given DNA nucleotides. On error return [`Err`] with a 0-based
+    /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
+    /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(dna: &'a str) -> Result<Self, usize> {
         match shared::check_dna(dna) {
@@ -47,7 +48,9 @@ enum RnaIterator<'a> {
 }
 
 impl<'a> Rna<'a> {
-    /// Create a new instance with given RNA nucleotides. On error return [`Err`] with a 0-based
+    /// Create a new [`Rna`] instance with given RNA nucleotides -[`Rna::GivenNucleotides`] variant.
+    /// If `rna` is valid, return  
+    /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(rna: &'a str) -> Result<Self, usize> {
         match shared::check_rna(rna) {
@@ -60,10 +63,10 @@ impl<'a> Rna<'a> {
     /// [RNA-based variant](Rna::GivenNucleotides) this iterates over the given nucleotides. For  
     /// [DNA-based variant](Rna::DnaBased) this translates the DNA nucleotides to RNA ones on the
     /// fly (without storing them anywhere).
-    /// 
+    ///
     /// We can't declare return type here as `impl Iterator<Item = char>` if we return a different
-    /// expression for each `match *self` branch here. Why? Such alternative results would be
-    /// two different implementations of [`Iterator`]. Hence we have our own type: [`RnaIterator`].
+    /// expression for each `match *self` branch here. Why? Such alternative results would be two
+    /// different implementations of [`Iterator`]. Hence we have our own type: [`RnaIterator`].
     fn iter(&self) -> RnaIterator<'a> {
         match *self {
             Rna::GivenNucleotides(rna) => RnaIterator::GivenNucleotides(rna.chars()),
@@ -95,7 +98,7 @@ impl<'a> PartialEq for Rna<'a> {
         self.iter().eq(other.iter())
     }
 }
-/// Not necessary, but valid.
+/// Not necessary for our purpose, but valid.
 impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {

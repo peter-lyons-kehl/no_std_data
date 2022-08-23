@@ -4,7 +4,8 @@
 use core::fmt::{self, Debug, Formatter};
 
 /// DNA (DNA nucleotide sequence).
-/// Implementing [`Eq`] is not necessary, but valid.
+///
+/// Implementing [`Eq`] is not necessary for our purpose, but valid.
 #[derive(Debug, PartialEq, Eq)]
 pub struct Dna<'a>(&'a str);
 
@@ -14,12 +15,13 @@ pub enum Rna<'a> {
     GivenNucleotides(&'a str),
     /// Represented by respective DNA nucleotides, but *not* transformed. Instead, methods of this
     /// type generate RNA nucleotides on the fly by iterating when the consumer calls
-    /// [`PartialEq::eq`] or [`Debug::fmt`] on `&self`.
+    /// [`PartialEq::eq`] or [`Debug::fmt`] on `&self`. See [`Rna::eq`] and [`Rna::iter`].
     DnaBased(&'a str),
 }
 
 impl<'a> Dna<'a> {
-    /// Create a new instance with given DNA nucleotides. On error return [`Err`] with a 0-based
+    /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
+    /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(dna: &'a str) -> Result<Self, usize> {
         shared::check_dna(dna)?;
@@ -36,7 +38,9 @@ impl<'a> Dna<'a> {
 }
 
 impl<'a> Rna<'a> {
-    /// Create a new instance with given RNA nucleotides. On error return [`Err`] with a 0-based
+    /// Create a new [`Rna`] instance with given RNA nucleotides -[`Rna::GivenNucleotides`] variant.
+    /// If `rna` is valid, return  
+    /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(rna: &'a str) -> Result<Self, usize> {
         match shared::check_rna(rna) {

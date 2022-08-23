@@ -6,7 +6,8 @@ use alloc::boxed::Box;
 use core::fmt::{self, Debug, Formatter};
 
 /// DNA (DNA nucleotide sequence).
-/// Implementing [`Eq`] is not necessary, but valid.
+/// 
+/// Implementing [`Eq`] is not necessary for our purpose, but valid.
 #[derive(Debug, PartialEq, Eq)]
 pub struct Dna(&'static str);
 

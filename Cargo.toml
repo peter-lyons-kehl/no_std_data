@@ -1,0 +1,2 @@
+[workspace]
+members = ["shared", "ok_heap-*", "no_heap-*"]

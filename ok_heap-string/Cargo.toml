@@ -1,6 +1,6 @@
 [package]
 edition = "2021"
-name = "rna-transcription"
+name = "ok_heap-string"
 version = "1.0.0"
 
 [dependencies]
