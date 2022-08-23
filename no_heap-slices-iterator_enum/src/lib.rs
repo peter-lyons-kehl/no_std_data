@@ -1,22 +1,27 @@
-//! no_std heapless (bare metal/embedded-friendly) implementation
+//! no_std heapless (bare metal/embedded-friendly)
 #![no_std]
 
 use core::fmt::{self, Debug, Formatter};
 use core::str::Chars;
 
-#[derive(Debug, PartialEq)]
+/// DNA (DNA nucleotide sequence).  
+/// Implementing [`Eq`] is not necessary, but valid.
+#[derive(Debug, PartialEq, Eq)]
 pub struct Dna<'a>(&'a str);
 
+/// RNA (RNA nucleotide sequence).
 pub enum Rna<'a> {
-    GivenNucleotides(&'a str), // RNA nucleotides
-    // Original DNA nucleotides, but *not* transformed. Instead, it will
-    // generate RNA nucleotides on the fly by iterating when the consumer calls
-    // `PartialEq::eq(...)` on `self`.
+    /// Represented by given RNA nucleotides. Returned by [`Rna::new`].
+    GivenNucleotides(&'a str),
+    /// Represented by respective DNA nucleotides, but *not* transformed. Instead, methods of this
+    /// type generate RNA nucleotides on the fly by iterating when the consumer calls
+    /// [`PartialEq::eq`] or [`Debug::fmt`] on `&self`. See [`Rna::iter`].
     DnaBased(&'a str),
 }
 
 impl<'a> Dna<'a> {
-    /** On error return Err with a 0-based index of the first incorrect character. */
+    /// Create a new instance with given DNA nucleotides. On error return [`Err`] with a 0-based
+    /// index of the first incorrect character.
     pub fn new(dna: &'a str) -> Result<Self, usize> {
         match shared::check_dna(dna) {
             Ok(()) => Ok(Self(dna)),
@@ -24,6 +29,8 @@ impl<'a> Dna<'a> {
         }
     }
 
+    /// Create a [DNA-based variant of `Rna`](Rna::GivenNucleotides) instance, based on `self`. No
+    /// transformation/iteration is done yet - see [`Rna::DnaBased`].
     pub fn into_rna(self) -> Rna<'a> {
         match self {
             Dna(dna) => Rna::DnaBased(dna),
@@ -31,13 +38,17 @@ impl<'a> Dna<'a> {
     }
 }
 
-pub enum RnaIterator<'a> {
+/// Iterator over RNA nucleotides. This iterates over either:
+/// - given RNA ones (for [RnaIterator::GivenNucleotides]), or
+/// - translated on the fly from DNA ones (for [RnaIterator::DnaBased]).
+enum RnaIterator<'a> {
     GivenNucleotides(Chars<'a>),
     DnaBased(Chars<'a>),
 }
 
 impl<'a> Rna<'a> {
-    /** On error return Err with a 0-based index of the first incorrect character. */
+    /// Create a new instance with given RNA nucleotides. On error return [`Err`] with a 0-based
+    /// index of the first incorrect character.
     pub fn new(rna: &'a str) -> Result<Self, usize> {
         match shared::check_rna(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
@@ -45,10 +56,15 @@ impl<'a> Rna<'a> {
         }
     }
 
-    /// We can't return type `impl Iterator<Item = char>` here, because the two
-    /// alternative results would be two different implementations of
-    /// `Iterator`. Hence we have our own type: `RnaIterator`.
-    pub fn iter(&self) -> RnaIterator<'a> {
+    /// Create an [`RnaIterator`] over `self`'s RNA nucleotides (chars). For  
+    /// [RNA-based variant](Rna::GivenNucleotides) this iterates over the given nucleotides. For  
+    /// [DNA-based variant](Rna::DnaBased) this translates the DNA nucleotides to RNA ones on the
+    /// fly (without storing them anywhere).
+    /// 
+    /// We can't declare return type here as `impl Iterator<Item = char>` if we return a different
+    /// expression for each `match *self` branch here. Why? Such alternative results would be
+    /// two different implementations of [`Iterator`]. Hence we have our own type: [`RnaIterator`].
+    fn iter(&self) -> RnaIterator<'a> {
         match *self {
             Rna::GivenNucleotides(rna) => RnaIterator::GivenNucleotides(rna.chars()),
 
@@ -79,6 +95,8 @@ impl<'a> PartialEq for Rna<'a> {
         self.iter().eq(other.iter())
     }
 }
+/// Not necessary, but valid.
+impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
@@ -98,11 +116,10 @@ impl<'a> Debug for Rna<'a> {
 
 #[cfg(test)]
 pub mod test {
-    // TODO bookmark & Embed Presentation: `arrform` is an heapless no_std
-    // alternative to format!(...). New to Rust? Exclamation mark indicates a
-    // macro invocation
+    //! Test(s) on top of Exercism's tests (which are in `../tests/`).
 
-    // Emb. Presentation: However, your unit tests can use full `std`:
+    // Unit tests of a `no_std` crate can't use `std` either. However, they can use heap (even if
+    // the crate being tested doesn't have access to heap).
     extern crate alloc;
     use alloc::format;
 

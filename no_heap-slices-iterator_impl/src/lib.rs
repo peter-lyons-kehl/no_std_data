@@ -3,7 +3,7 @@
 
 use core::fmt::{self, Debug, Formatter};
 
-/// DNA (DNA nucleotide sequence).
+/// DNA (DNA nucleotide sequence).  
 /// Implementing [`Eq`] is not necessary, but valid.
 #[derive(Debug, PartialEq, Eq)]
 pub struct Dna<'a>(&'a str);
@@ -14,7 +14,7 @@ pub enum Rna<'a> {
     GivenNucleotides(&'a str),
     /// Represented by respective DNA nucleotides, but *not* transformed. Instead, methods of this
     /// type generate RNA nucleotides on the fly by iterating when the consumer calls
-    /// [`PartialEq::eq`] or [`Debug::fmt`] on `&self`.
+    /// [`PartialEq::eq`] or [`Debug::fmt`] on `&self`. See [`Rna::iter`].
     DnaBased(&'a str),
 }
 
@@ -22,8 +22,10 @@ impl<'a> Dna<'a> {
     /// Create a new instance with given DNA nucleotides. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(dna: &'a str) -> Result<Self, usize> {
-        shared::check_dna(dna)?;
-        Ok(Self(dna))
+        match shared::check_dna(dna) {
+            Ok(()) => Ok(Self(dna)),
+            Err(i) => Err(i),
+        }
     }
 
     /// Create a [DNA-based variant of `Rna`](Rna::GivenNucleotides) instance, based on `self`. No
@@ -45,47 +47,46 @@ impl<'a> Rna<'a> {
         }
     }
 
-    /// Get an [`Iterator`] over `self`'s RNA nucleotides (chars), and call `closure` with that
-    /// (`self`'s) iterator and `other_rna_chars`. For  
+    /// Use together with [`Rna::is_dna_based`].
+    fn stored_nucleotides(&self) -> &'a str {
+        match *self {
+            Self::GivenNucleotides(rna) => rna,
+            Self::DnaBased(dna) => dna,
+        }
+    }
+
+    fn is_dna_based(&self) -> bool {
+        matches!(*self, Self::DnaBased(_))
+    }
+
+    /// Create an [`Iterator`] over `self`'s RNA nucleotides (chars). For  
     /// [RNA-based variant](Rna::GivenNucleotides) this iterates over the given nucleotides. For  
     /// [DNA-based variant](Rna::DnaBased) this translates the DNA nucleotides to RNA ones on the
     /// fly (without storing them anywhere).
-    fn with_chars<R, C>(&self, other_rna_chars: &mut dyn Iterator<Item = char>, closure: C) -> R
-    where
-        C: Fn(&mut dyn Iterator<Item = char>, &mut dyn Iterator<Item = char>) -> R,
-    {
-        match self {
-            Rna::GivenNucleotides(rna) => closure(&mut rna.chars(), other_rna_chars),
-            Rna::DnaBased(dna) => {
-                closure(&mut dna.chars().map(shared::dna_to_rna), other_rna_chars)
+    ///
+    /// This return type can't be declared as `impl Iterator<Item = char> + 'a`, but it has to use
+    /// `_` which indicates _lifetime elision_. Thanks to
+    /// https://robinmoussu.gitlab.io/blog/post/2021-03-25_rust_iterators_tips_and_tricks.
+    fn iter(&self) -> impl Iterator<Item = char> + '_ {
+        self.stored_nucleotides().chars().map(|c| {
+            if self.is_dna_based() {
+                shared::dna_to_rna(c)
+            } else {
+                c
             }
-        }
+        })
     }
 }
 
 impl<'a> PartialEq for Rna<'a> {
     fn eq(&self, other: &Self) -> bool {
-        fn inner(
-            iter_one: &mut dyn Iterator<Item = char>,
-            iter_two: &mut dyn Iterator<Item = char>,
-        ) -> bool {
-            iter_one.eq(iter_two)
-        }
-
-        match self {
-            Self::GivenNucleotides(rna) => other.with_chars(&mut rna.chars(), inner),
-            Self::DnaBased(dna) => {
-                other.with_chars(&mut dna.chars().map(shared::dna_to_rna), inner)
-            }
-        }
+        self.iter().eq(other.iter())
     }
 }
 /// Not necessary, but valid.
 impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {
-    /// Compared to [../../no_heap-slices-iterator]([../../no_heap-slices-iterator),
-    /// [Self::DnaBased] variant here doesn't have `self.iter()`. So we map DNA to RNA chars here.
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
         write!(f, "RNA {{")?;
         match self {
@@ -94,9 +95,7 @@ impl<'a> Debug for Rna<'a> {
             }
             Rna::DnaBased(dna) => {
                 write!(f, "DnaBased {{{dna}}} which translates to ")?;
-                dna.chars()
-                    .map(shared::dna_to_rna)
-                    .try_for_each(|c| write!(f, "{c}"))?;
+                self.iter().try_for_each(|c| write!(f, "{c}"))?;
             }
         }
         write!(f, "}}")
@@ -113,11 +112,8 @@ pub mod test {
     use alloc::format;
 
     #[test]
-    /// Test both [`Dna::new`](super::Dna::new), and (primarily) [`core::fmt::Debug::fmt`] on
-    /// [`Rna`](super::Rna). If [`Dna::new`](super::Dna::new) fails, it  
-    /// returns [`Err`] containing `usize` index of the offending nucleotide (`char`), and this
-    /// function then returns that [`Err`].
-    fn test_rna_given_nucleotides_debug() -> Result<(), usize> {
+    #[allow(unused_must_use)]
+    fn test_rna_given_nucleotides_debug() {
         super::Dna::new("GCTA").map(|dna| {
             let rna = dna.into_rna();
             let rna_dbg = format!("{:?}", rna);
@@ -125,6 +121,6 @@ pub mod test {
                 "RNA {DnaBased {GCTA} which translates to CGAU}",
                 rna_dbg.as_str()
             );
-        })
+        });
     }
 }

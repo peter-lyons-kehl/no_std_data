@@ -1,0 +1,6 @@
+[package]
+edition = "2021"
+name = "rna-transcription"
+version = "1.0.0"
+[dependencies]
+shared = { path = "../shared" }
