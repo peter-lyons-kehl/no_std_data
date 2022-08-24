@@ -14,7 +14,9 @@ const DEFAULT_MAX_NUCLEOTIDES: usize = 12;
 ///
 /// We can't derive [`PartialEq`]. Why? Because we want to compare [`Rna`] types regardless of `M`.
 #[derive(Debug, Clone)]
-pub struct Dna<'a, const M: usize = DEFAULT_MAX_NUCLEOTIDES>(&'a str);
+pub struct DnaImpl<'a, const M: usize = DEFAULT_MAX_NUCLEOTIDES>(&'a str);
+
+pub type Dna<'a> = DnaImpl<'a, DEFAULT_MAX_NUCLEOTIDES>;
 
 /// RNA (RNA nucleotide sequence).
 ///
@@ -24,12 +26,14 @@ pub struct Dna<'a, const M: usize = DEFAULT_MAX_NUCLEOTIDES>(&'a str);
 /// We can't derive [`PartialEq`] or [`Debug`]. Why? Because an `Rna` instance may contain leftover
 /// nucleotides - insecure! Also, we want to compare [`Rna`] types regardless of `M`.
 #[derive(Clone)]
-pub struct Rna<const M: usize = DEFAULT_MAX_NUCLEOTIDES> {
+pub struct RnaImpl<const M: usize = DEFAULT_MAX_NUCLEOTIDES> {
     rna: [u8; M],
     len: usize,
 }
 
-impl<'a, const M: usize> Dna<'a, M> {
+pub type Rna = RnaImpl<DEFAULT_MAX_NUCLEOTIDES>;
+
+impl<'a, const M: usize> DnaImpl<'a, M> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
@@ -41,12 +45,12 @@ impl<'a, const M: usize> Dna<'a, M> {
     /// Create an [`Rna`] instance, based on `self`. The returned instance contains the translated
     /// nucleotides. (The result doesn't depend on the original [`Dna`] instance's lifetime). TODO
     /// add similar doc to `ok_heap_string`.
-    pub fn into_rna(self) -> Rna<M> {
-        Rna::new_from_iter(self.0.chars().map(shared::dna_to_rna)).expect("RNA sequence")
+    pub fn into_rna(self) -> RnaImpl<M> {
+        RnaImpl::new_from_iter(self.0.chars().map(shared::dna_to_rna)).expect("RNA sequence")
     }
 }
 
-impl<const M: usize> Rna<M> {
+impl<const M: usize> RnaImpl<M> {
     pub fn new(rna: &str) -> Result<Self, usize> {
         Self::new_from_iter(rna.chars())
     }
@@ -74,22 +78,22 @@ impl<const M: usize> Rna<M> {
     }
 }
 
-impl<'a, const L: usize, const R: usize> PartialEq<Dna<'_, R>> for Dna<'a, L> {
-    fn eq(&self, other: &Dna<'_, R>) -> bool {
+impl<'a, const L: usize, const R: usize> PartialEq<DnaImpl<'_, R>> for DnaImpl<'a, L> {
+    fn eq(&self, other: &DnaImpl<'_, R>) -> bool {
         self.0 == other.0
     }
 }
-impl<'a, const M: usize> Eq for Dna<'a, M> {}
+impl<'a, const M: usize> Eq for DnaImpl<'a, M> {}
 
-impl<const L: usize, const R: usize> PartialEq<Rna<R>> for Rna<L> {
-    fn eq(&self, other: &Rna<R>) -> bool {
+impl<const L: usize, const R: usize> PartialEq<RnaImpl<R>> for RnaImpl<L> {
+    fn eq(&self, other: &RnaImpl<R>) -> bool {
         self.bytes() == other.bytes()
     }
 }
 /// Not necessary, but valid.
-impl Eq for Rna {}
+impl Eq for RnaImpl {}
 
-impl<const N: usize> Debug for Rna<N> {
+impl<const N: usize> Debug for RnaImpl<N> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
         write!(
             f,
@@ -107,14 +111,20 @@ pub mod test {
     // the crate being tested doesn't have access to heap).
     extern crate alloc;
     use alloc::format;
+    
+    // @TODO: add & rename - in othre crates
+    #[test]
+    fn test_rna_given_nucleotides_debug() {
+        let rna = super::Rna::new("CGAU").expect("Rna");
+        let rna_dbg = format!("{:?}", rna);
+        assert_eq!("RNA {CGAU}", rna_dbg.as_str());
+    }
 
     #[test]
-    #[allow(unused_must_use)]
-    fn test_rna_given_nucleotides_debug() {
-        <super::Dna<20>>::new("GCTA").map(|dna| {
-            let rna = dna.into_rna();
-            let rna_dbg = format!("{:?}", rna);
-            assert_eq!("RNA {CGAU}", rna_dbg.as_str());
-        });
+    fn test_dna_into_rna_debug() {
+        let dna = <super::DnaImpl<20>>::new("GCTA").expect("Dna");
+        let rna = dna.into_rna();
+        let rna_dbg = format!("{:?}", rna);
+        assert_eq!("RNA {CGAU}", rna_dbg.as_str());
     }
 }
