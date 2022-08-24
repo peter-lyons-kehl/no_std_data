@@ -2,14 +2,17 @@
 #![no_std]
 
 // @TODO Others: remove import of Debug - where it's derived only
+
 use core::fmt::{self, Debug, Formatter};
 
 const MAX_NUM_RNA_NUCLEOTIDES: usize = 14;
 
+// @TODO Others: Derive/impl Clone.
+
 /// DNA (DNA nucleotide sequence). `Dna` itself is `&str` slice-based. (Sufficient for our purpose.) Only `Rna` is array-based.
 ///
 /// Implementing [`Eq`] is not necessary, but valid.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Dna<'a>(&'a str);
 
 /// RNA (RNA nucleotide sequence). Storing RNA nucleotides.
@@ -19,6 +22,8 @@ pub struct Dna<'a>(&'a str);
 ///
 /// Security: Properly implementing similar types is difficult. Otherwise they may leak older data.
 /// (Wiping out such data is not in our scope.)
+/// 
+/// Deriving [`Default`] makes the new instance valid, because it sets `len` to 0.
 #[derive(Default)]
 pub struct Rna {
     rna: [char; MAX_NUM_RNA_NUCLEOTIDES],
