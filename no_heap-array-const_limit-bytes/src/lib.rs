@@ -5,7 +5,7 @@
 
 use core::fmt::{self, Debug, Formatter};
 
-const MAX_NUM_RNA_NUCLEOTIDES: usize = 14;
+const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
 
 // @TODO Others: Derive/impl Clone.
 
