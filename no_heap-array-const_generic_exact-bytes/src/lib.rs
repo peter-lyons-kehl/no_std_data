@@ -13,7 +13,7 @@ pub struct Dna<'a, const N: usize>(&'a str);
 /// Usable only if the required `const N` parameter is known in compile time. Can't derive Default -
 /// it's defined for arrays only up to a certain size.
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct Rna<const N: usize>([char; N]);
+pub struct Rna<const N: usize>([u8; N]);
 
 impl<'a, const N: usize> Dna<'a, N> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
@@ -39,9 +39,9 @@ impl<const N: usize> Rna<N> {
         //let mut result = Self(core::array::from_fn(|_| Default::default()));
         // Can't `result.0.copy_from_slice(rna)` - because `result.0` is `&[char]`.
         let result = Self(core::array::from_fn(|_| {
-            rna_iter.next().expect("nucleotide")
+            rna_iter.next().expect("nucleotide") as u8
         }));
-        shared::check_rna_chars(&result.0)?;
+        shared::check_rna_char_iter(result.0.iter().map(|&b| b as char))?;
         Ok(result)
     }
 }

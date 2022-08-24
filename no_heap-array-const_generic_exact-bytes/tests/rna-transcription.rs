@@ -1,4 +1,4 @@
-use no_heap_return_const_generics_array_chars as dna;
+use no_heap_array_const_generic_exact_bytes as dna;
 
 #[test]
 fn test_valid_dna_input() {
