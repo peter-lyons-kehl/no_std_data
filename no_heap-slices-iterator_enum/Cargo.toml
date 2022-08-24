@@ -1,6 +1,0 @@
-[package]
-edition = "2021"
-name = "no_heap-slices-iterator_enum"
-version = "1.0.0"
-[dependencies]
-shared = { path = "../shared" }

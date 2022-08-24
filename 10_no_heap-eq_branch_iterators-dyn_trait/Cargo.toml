@@ -1,0 +1,6 @@
+[package]
+edition = "2021"
+name = "no_heap-eq_branch_iterators-dyn_trait"
+version = "1.0.0"
+[dependencies]
+shared = { path = "../00_shared" }

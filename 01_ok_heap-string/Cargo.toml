@@ -1,0 +1,7 @@
+[package]
+edition = "2021"
+name = "ok_heap-string"
+version = "1.0.0"
+
+[dependencies]
+shared = { path = "../00_shared" }

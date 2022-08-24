@@ -1,2 +1,2 @@
 [workspace]
-members = ["shared", "ok_heap-*", "no_heap-*"]
+members = ["00_shared", "*_ok_heap-*", "*_no_heap-*"]
