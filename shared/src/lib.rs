@@ -7,10 +7,10 @@ const RNA_NUCLEOTIDES: &str = "CGAU";
 /// Result of [`check`] and related functions.
 type CheckResult = Result<(), usize>;
 
-/// Check that any characters in `chars_to_be_checked` are in `allowed_chars`. See [`check_dna`] or
-/// [`check_rna`] for result type description.
-fn check(to_be_checked: &str, allowed: &str) -> CheckResult {
-    for (i, c) in to_be_checked.chars().enumerate() {
+/// Check that any characters from `chars_to_be_checked` are in `allowed_chars`. See [`check_dna`]
+/// or [`check_rna_str`] for result type description.
+fn check(to_be_checked: impl Iterator<Item = char>, allowed: &str) -> CheckResult {
+    for (i, c) in to_be_checked.enumerate() {
         if !allowed.contains(c) {
             return Err(i);
         }
@@ -21,13 +21,19 @@ fn check(to_be_checked: &str, allowed: &str) -> CheckResult {
 /// Check that `dna` contains DNA nucleotides only. On success return [`Ok(())`](Ok). On error
 /// return [`Err`] with a 0-based index of the first incorrect character.
 pub fn check_dna(dna: &str) -> CheckResult {
-    check(dna, DNA_NUCLEOTIDES)
+    check(dna.chars(), DNA_NUCLEOTIDES)
 }
 
 /// Check that `rna` contains RNA nucleotides only. On success return [`Ok(())`](Ok). On error
 /// return [`Err`] with a 0-based index of the first incorrect character.
-pub fn check_rna(rna: &str) -> CheckResult {
-    check(rna, RNA_NUCLEOTIDES)
+pub fn check_rna_str(rna: &str) -> CheckResult {
+    check(rna.chars(), RNA_NUCLEOTIDES)
+}
+
+/// Check that `rna` contains RNA nucleotides only. On success return [`Ok(())`](Ok). On error
+/// return [`Err`] with a 0-based index of the first incorrect character.
+pub fn check_rna_chars(rna: &[char]) -> CheckResult {
+    check(rna.iter().cloned(), RNA_NUCLEOTIDES)
 }
 
 /// Translate DNA nucleotide `dna_nucl` to a RNA nucleaotide. [`panic`] if `dna_nucl` is invalid.
@@ -46,13 +52,13 @@ mod tests {
     #[test]
     fn check_dna_rna_valid() {
         assert!(super::check_dna("GCTA").is_ok());
-        assert!(super::check_rna("CGAU").is_ok());
+        assert!(super::check_rna_str("CGAU").is_ok());
     }
 
     #[test]
     fn check_dna_rna_invalid() {
         assert_eq!(super::check_dna("CU"), Err(1));
-        assert_eq!(super::check_rna("CT"), Err(1));
+        assert_eq!(super::check_rna_str("CT"), Err(1));
     }
 
     #[test]

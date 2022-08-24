@@ -34,7 +34,7 @@ impl<'a> Dna<'a> {
 impl<'a> Rna<'a> {
     /** On error return Err with a 0-based index of the first incorrect character. */
     pub fn new(rna: &'a str) -> Result<Self, usize> {
-        match shared::check_rna(rna) {
+        match shared::check_rna_str(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
             Err(i) => Err(i),
         }
