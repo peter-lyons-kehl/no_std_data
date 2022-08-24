@@ -17,8 +17,8 @@ pub enum Rna<'a> {
 //pub struct RnaShared<'a> {}
 
 impl<'a> Dna<'a> {
-    pub fn new(dna: &'a str) -> Result<Self, usize> {
-        shared::check_dna(dna)?;
+    pub fn new(dna: &'a str) -> utils::Result<Self> {
+        utils::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -26,21 +26,20 @@ impl<'a> Dna<'a> {
     where
         's: 'a,
     {
-        Rna::new_from_iter_and_storage(self.0.chars().map(shared::dna_to_rna), storage)
-            .expect("RNA")
+        Rna::new_from_iter_and_storage(self.0.chars().map(utils::dna_to_rna), storage).expect("RNA")
     }
 }
 
 impl<'a> Rna<'a> {
-    pub fn new(rna: &'a str) -> shared::Result<Self> {
-        shared::check_rna_str(rna)?;
+    pub fn new(rna: &'a str) -> utils::Result<Self> {
+        utils::check_rna_str(rna)?;
         Ok(Self::GivenNucleotides(rna))
     }
 
     fn new_from_iter_and_storage<'s>(
         rna_iter: impl Iterator<Item = char>,
         storage: &'s mut [u8],
-    ) -> shared::Result<Self>
+    ) -> utils::Result<Self>
     where
         's: 'a,
     {
@@ -51,7 +50,7 @@ impl<'a> Rna<'a> {
         }
         let result = Self::MutableNucleotides { rna: storage, len };
         // This would not work for Unicode in general.
-        shared::check_rna_char_iter(result.bytes().iter().map(|&b| b as char))?;
+        utils::check_rna_char_iter(result.bytes().iter().map(|&b| b as char))?;
         Ok(result)
     }
 

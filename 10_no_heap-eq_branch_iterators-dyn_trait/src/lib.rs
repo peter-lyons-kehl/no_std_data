@@ -16,8 +16,8 @@ pub enum Rna<'a> {
 
 impl<'a> Dna<'a> {
     /** On error return Err with a 0-based index of the first incorrect character. */
-    pub fn new(dna: &'a str) -> Result<Self, usize> {
-        match shared::check_dna(dna) {
+    pub fn new(dna: &'a str) -> utils::Result<Self> {
+        match utils::check_dna(dna) {
             Ok(()) => Ok(Self(dna)),
             Err(i) => Err(i),
         }
@@ -32,8 +32,8 @@ impl<'a> Dna<'a> {
 
 impl<'a> Rna<'a> {
     /** On error return Err with a 0-based index of the first incorrect character. */
-    pub fn new(rna: &'a str) -> Result<Self, usize> {
-        match shared::check_rna_str(rna) {
+    pub fn new(rna: &'a str) -> utils::Result<Self> {
+        match utils::check_rna_str(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
             Err(i) => Err(i),
         }
@@ -59,7 +59,7 @@ impl<'a> PartialEq for Rna<'a> {
                 self_chars = &mut self_rna_chars;
             }
             Self::DnaBased(dna) => {
-                self_dna_chars_mapped = dna.chars().map(shared::dna_to_rna);
+                self_dna_chars_mapped = dna.chars().map(utils::dna_to_rna);
                 self_chars = &mut self_dna_chars_mapped;
             }
         }
@@ -69,7 +69,7 @@ impl<'a> PartialEq for Rna<'a> {
                 other_chars = &mut other_rna_chars;
             }
             Self::DnaBased(dna) => {
-                other_dna_chars_mapped = dna.chars().map(shared::dna_to_rna);
+                other_dna_chars_mapped = dna.chars().map(utils::dna_to_rna);
                 other_chars = &mut other_dna_chars_mapped;
             }
         }
@@ -93,7 +93,7 @@ impl<'a> Debug for Rna<'a> {
                 // Compared to ../../no_std-no_heap-slices-iterator here we
                 // don't have self.iter(). So we map dna to rna here:
                 dna.chars()
-                    .map(shared::dna_to_rna)
+                    .map(utils::dna_to_rna)
                     .try_for_each(|c| write!(f, "{c}"))?;
             }
         }

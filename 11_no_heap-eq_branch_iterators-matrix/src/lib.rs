@@ -16,8 +16,8 @@ pub enum Rna<'a> {
 
 impl<'a> Dna<'a> {
     /** On error return Err with a 0-based index of the first incorrect character. */
-    pub fn new(dna: &'a str) -> Result<Self, usize> {
-        match shared::check_dna(dna) {
+    pub fn new(dna: &'a str) -> utils::Result<Self> {
+        match utils::check_dna(dna) {
             Ok(()) => Ok(Self(dna)),
             Err(i) => Err(i),
         }
@@ -32,8 +32,8 @@ impl<'a> Dna<'a> {
 
 impl<'a> Rna<'a> {
     /** On error return Err with a 0-based index of the first incorrect character. */
-    pub fn new(rna: &'a str) -> Result<Self, usize> {
-        match shared::check_rna_str(rna) {
+    pub fn new(rna: &'a str) -> utils::Result<Self> {
+        match utils::check_rna_str(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
             Err(i) => Err(i),
         }
@@ -52,10 +52,10 @@ impl<'a> PartialEq for Rna<'a> {
             }
             (Self::GivenNucleotides(self_rna), Self::DnaBased(other_dna)) => self_rna
                 .chars()
-                .eq(other_dna.chars().map(shared::dna_to_rna)),
+                .eq(other_dna.chars().map(utils::dna_to_rna)),
             (Self::DnaBased(self_dna), Self::GivenNucleotides(other_rna)) => self_dna
                 .chars()
-                .map(shared::dna_to_rna)
+                .map(utils::dna_to_rna)
                 .eq(other_rna.chars()),
             (Self::DnaBased(self_dna), Self::DnaBased(other_dna)) => {
                 // No need to map both of them - their DNA must be the same, too
@@ -77,7 +77,7 @@ impl<'a> Debug for Rna<'a> {
                 // Compared to ../../no_std-no_heap-slices-iterator here we
                 // don't have self.iter(). So we map dna to rna here:
                 dna.chars()
-                    .map(shared::dna_to_rna)
+                    .map(utils::dna_to_rna)
                     .try_for_each(|c| write!(f, "{c}"))?;
             }
         }

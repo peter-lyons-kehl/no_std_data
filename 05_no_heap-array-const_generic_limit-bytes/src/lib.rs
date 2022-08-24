@@ -37,8 +37,8 @@ impl<'a, const M: usize> DnaImpl<'a, M> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> Result<Self, usize> {
-        shared::check_dna(dna)?;
+    pub fn new(dna: &'a str) -> utils::Result<Self> {
+        utils::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -46,15 +46,15 @@ impl<'a, const M: usize> DnaImpl<'a, M> {
     /// nucleotides. (The result doesn't depend on the original [`Dna`] instance's lifetime). TODO
     /// add similar doc to `ok_heap_string`.
     pub fn into_rna(self) -> RnaImpl<M> {
-        RnaImpl::new_from_iter(self.0.chars().map(shared::dna_to_rna)).expect("RNA sequence")
+        RnaImpl::new_from_iter(self.0.chars().map(utils::dna_to_rna)).expect("RNA sequence")
     }
 }
 
 impl<const M: usize> RnaImpl<M> {
-    pub fn new(rna: &str) -> Result<Self, usize> {
+    pub fn new(rna: &str) -> utils::Result<Self> {
         Self::new_from_iter(rna.chars())
     }
-    pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> Result<Self, usize> {
+    pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> utils::Result<Self> {
         let mut len = 0usize;
         let rna = core::array::from_fn(|_| {
             if let Some(c) = rna_iter.next() {
@@ -69,7 +69,7 @@ impl<const M: usize> RnaImpl<M> {
             return Err(len);
         }
         // Only check the valid items: `0..len`. Hence `Iterator::take`.
-        shared::check_rna_char_iter(rna.iter().take(len).map(|&b| b as char))?;
+        utils::check_rna_char_iter(rna.iter().take(len).map(|&b| b as char))?;
         Ok(Self { rna, len })
     }
 

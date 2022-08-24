@@ -3,4 +3,4 @@ edition = "2021"
 name = "no_heap-slices-iterator_impl"
 version = "1.0.0"
 [dependencies]
-shared = { path = "../00_shared" }
+utils = { path = "../00_utils" }

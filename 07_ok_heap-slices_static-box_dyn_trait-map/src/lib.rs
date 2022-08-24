@@ -24,8 +24,8 @@ pub enum Rna {
 impl Dna {
     /// Create a new instance with given DNA nucleotides. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'static str) -> Result<Self, usize> {
-        match shared::check_dna(dna) {
+    pub fn new(dna: &'static str) -> utils::Result<Self> {
+        match utils::check_dna(dna) {
             Ok(()) => Ok(Self(dna)),
             Err(i) => Err(i),
         }
@@ -43,8 +43,8 @@ impl Dna {
 impl Rna {
     /// Create a new instance with given RNA nucleotides. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &'static str) -> Result<Self, usize> {
-        match shared::check_rna_str(rna) {
+    pub fn new(rna: &'static str) -> utils::Result<Self> {
+        match utils::check_rna_str(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
             Err(i) => Err(i),
         }
@@ -58,7 +58,7 @@ impl Rna {
         match *self {
             Rna::GivenNucleotides(rna) => Box::new(rna.chars()),
 
-            Rna::DnaBased(dna) => Box::new(dna.chars().map(shared::dna_to_rna)),
+            Rna::DnaBased(dna) => Box::new(dna.chars().map(utils::dna_to_rna)),
         }
     }
 }
@@ -100,7 +100,7 @@ pub mod test {
     /// [`Rna`](super::Rna). If [`Dna::new`](super::Dna::new) fails, it  
     /// returns [`Err`] containing `usize` index of the offending nucleotide (`char`), and this
     /// function then returns that [`Err`].
-    fn test_rna_given_nucleotides_debug() -> Result<(), usize> {
+    fn test_rna_given_nucleotides_debug() -> utils::Result<()> {
         super::Dna::new("GCTA").map(|dna| {
             let rna = dna.into_rna();
             let rna_dbg = format!("{:?}", rna);

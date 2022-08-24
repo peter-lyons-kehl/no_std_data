@@ -7,7 +7,7 @@ const RNA_NUCLEOTIDES: &str = "CGAU";
 pub type Result<T> = core::result::Result<T, usize>;
 
 /// Result of [`check`] and related functions.
-/// 
+///
 /// It doesn't need to be public (even if used in signatures of public functions here - because
 /// those get exposed with the type resolved, without the alias).
 type CheckResult = Result<()>;

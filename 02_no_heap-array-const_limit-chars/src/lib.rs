@@ -33,14 +33,14 @@ pub struct Rna {
 }
 
 impl<'a> Dna<'a> {
-    pub fn new(dna: &'a str) -> Result<Self, usize> {
+    pub fn new(dna: &'a str) -> utils::Result<Self> {
         // @TODO in other projects: use ? op, and add a link
-        shared::check_dna(dna)?;
+        utils::check_dna(dna)?;
         Ok(Self(dna))
     }
 
     pub fn into_rna(self) -> Rna {
-        Rna::new_from_iter(self.0.chars().map(shared::dna_to_rna)).expect("RNA")
+        Rna::new_from_iter(self.0.chars().map(utils::dna_to_rna)).expect("RNA")
     }
 }
 
@@ -49,17 +49,17 @@ impl Rna {
     /// If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new<'a>(rna: &'a str) -> Result<Self, usize> {
+    pub fn new<'a>(rna: &'a str) -> utils::Result<Self> {
         Self::new_from_iter(rna.chars())
     }
 
-    fn new_from_iter(rna_iter: impl Iterator<Item = char>) -> Result<Self, usize> {
+    fn new_from_iter(rna_iter: impl Iterator<Item = char>) -> utils::Result<Self> {
         let mut result = Rna::default();
         for c in rna_iter {
             result.rna[result.len] = c;
             result.len += 1;
         }
-        shared::check_rna_chars(result.chars())?;
+        utils::check_rna_chars(result.chars())?;
         Ok(result)
     }
 

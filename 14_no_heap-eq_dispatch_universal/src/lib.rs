@@ -17,8 +17,8 @@ pub enum Rna<'a> {
 
 impl<'a> Dna<'a> {
     /** On error return Err with a 0-based index of the first incorrect character. */
-    pub fn new(dna: &'a str) -> Result<Self, usize> {
-        match shared::check_dna(dna) {
+    pub fn new(dna: &'a str) -> utils::Result<Self> {
+        match utils::check_dna(dna) {
             Ok(()) => Ok(Self(dna)),
             Err(i) => Err(i),
         }
@@ -33,8 +33,8 @@ impl<'a> Dna<'a> {
 
 impl<'a> Rna<'a> {
     /** On error return Err with a 0-based index of the first incorrect character. */
-    pub fn new(rna: &'a str) -> Result<Self, usize> {
-        match shared::check_rna_str(rna) {
+    pub fn new(rna: &'a str) -> utils::Result<Self> {
+        match utils::check_rna_str(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
             Err(i) => Err(i),
         }
@@ -46,7 +46,7 @@ impl<'a> Rna<'a> {
     {
         match self {
             Rna::GivenNucleotides(rna) => closure(&mut rna.chars(), param),
-            Rna::DnaBased(dna) => closure(&mut dna.chars().map(shared::dna_to_rna), param),
+            Rna::DnaBased(dna) => closure(&mut dna.chars().map(utils::dna_to_rna), param),
         }
     }
 }
@@ -87,7 +87,7 @@ impl<'a> Debug for Rna<'a> {
                 // Compared to ../../no_std-no_heap-slices-iterator here we
                 // don't have self.iter(). So we map dna to rna here:
                 dna.chars()
-                    .map(shared::dna_to_rna)
+                    .map(utils::dna_to_rna)
                     .try_for_each(|c| write!(f, "{c}"))?;
             }
         }

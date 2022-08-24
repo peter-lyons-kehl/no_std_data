@@ -23,8 +23,8 @@ impl<'a> Dna<'a> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> Result<Self, usize> {
-        shared::check_dna(dna)?;
+    pub fn new(dna: &'a str) -> utils::Result<Self> {
+        utils::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -42,8 +42,8 @@ impl<'a> Rna<'a> {
     /// If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &'a str) -> Result<Self, usize> {
-        match shared::check_rna_str(rna) {
+    pub fn new(rna: &'a str) -> utils::Result<Self> {
+        match utils::check_rna_str(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
             Err(i) => Err(i),
         }
@@ -60,9 +60,7 @@ impl<'a> Rna<'a> {
     {
         match self {
             Rna::GivenNucleotides(rna) => closure(&mut rna.chars(), other_rna_chars),
-            Rna::DnaBased(dna) => {
-                closure(&mut dna.chars().map(shared::dna_to_rna), other_rna_chars)
-            }
+            Rna::DnaBased(dna) => closure(&mut dna.chars().map(utils::dna_to_rna), other_rna_chars),
         }
     }
 }
@@ -78,9 +76,7 @@ impl<'a> PartialEq for Rna<'a> {
 
         match self {
             Self::GivenNucleotides(rna) => other.with_chars(&mut rna.chars(), inner),
-            Self::DnaBased(dna) => {
-                other.with_chars(&mut dna.chars().map(shared::dna_to_rna), inner)
-            }
+            Self::DnaBased(dna) => other.with_chars(&mut dna.chars().map(utils::dna_to_rna), inner),
         }
     }
 }
@@ -99,7 +95,7 @@ impl<'a> Debug for Rna<'a> {
             Rna::DnaBased(dna) => {
                 write!(f, "DnaBased {{{dna}}} which translates to ")?;
                 dna.chars()
-                    .map(shared::dna_to_rna)
+                    .map(utils::dna_to_rna)
                     .try_for_each(|c| write!(f, "{c}"))?;
             }
         }
@@ -121,7 +117,7 @@ pub mod test {
     /// [`Rna`](super::Rna). If [`Dna::new`](super::Dna::new) fails, it  
     /// returns [`Err`] containing `usize` index of the offending nucleotide (`char`), and this
     /// function then returns that [`Err`].
-    fn test_rna_given_nucleotides_debug() -> Result<(), usize> {
+    fn test_rna_given_nucleotides_debug() -> utils::Result<()> {
         super::Dna::new("GCTA").map(|dna| {
             let rna = dna.into_rna();
             let rna_dbg = format!("{:?}", rna);

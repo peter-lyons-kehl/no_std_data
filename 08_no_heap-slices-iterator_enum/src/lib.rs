@@ -23,8 +23,8 @@ impl<'a> Dna<'a> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> Result<Self, usize> {
-        match shared::check_dna(dna) {
+    pub fn new(dna: &'a str) -> utils::Result<Self> {
+        match utils::check_dna(dna) {
             Ok(()) => Ok(Self(dna)),
             Err(i) => Err(i),
         }
@@ -52,8 +52,8 @@ impl<'a> Rna<'a> {
     /// If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &'a str) -> Result<Self, usize> {
-        match shared::check_rna_str(rna) {
+    pub fn new(rna: &'a str) -> utils::Result<Self> {
+        match utils::check_rna_str(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
             Err(i) => Err(i),
         }
@@ -84,7 +84,7 @@ impl<'a> Iterator for RnaIterator<'a> {
             RnaIterator::DnaBased(chars) => {
                 let dna = chars.next();
                 match dna {
-                    Some(nucl) => Some(shared::dna_to_rna(nucl)),
+                    Some(nucl) => Some(utils::dna_to_rna(nucl)),
                     None => None,
                 }
             }

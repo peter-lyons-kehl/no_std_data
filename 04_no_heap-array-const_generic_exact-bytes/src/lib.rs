@@ -19,8 +19,8 @@ impl<'a, const N: usize> Dna<'a, N> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> Result<Self, usize> {
-        shared::check_dna(dna)?;
+    pub fn new(dna: &'a str) -> utils::Result<Self> {
+        utils::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -28,15 +28,15 @@ impl<'a, const N: usize> Dna<'a, N> {
     /// nucleotides. (The result doesn't depend on the original [`Dna`] instance's lifetime).
     /// TODO add similar doc to `ok_heap_string`.
     pub fn into_rna(self) -> Rna<N> {
-        Rna::new_from_iter(self.0.chars().map(shared::dna_to_rna)).expect("RNA sequence")
+        Rna::new_from_iter(self.0.chars().map(utils::dna_to_rna)).expect("RNA sequence")
     }
 }
 
 impl<const N: usize> Rna<N> {
-    pub fn new(rna: &str) -> Result<Self, usize> {
+    pub fn new(rna: &str) -> utils::Result<Self> {
         Self::new_from_iter(rna.chars())
     }
-    pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> Result<Self, usize> {
+    pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> utils::Result<Self> {
         //let mut result = Self(core::array::from_fn(|_| Default::default()));
         // Can't `result.0.copy_from_slice(rna)` - because `result.0` is `&[char]`.
         let result = Self(core::array::from_fn(|_| {
@@ -46,7 +46,7 @@ impl<const N: usize> Rna<N> {
             rna_iter.next().is_none(),
             "Not enough space, or too long RNA source."
         );
-        shared::check_rna_char_iter(result.0.iter().map(|&b| b as char))?;
+        utils::check_rna_char_iter(result.0.iter().map(|&b| b as char))?;
         Ok(result)
     }
 }
