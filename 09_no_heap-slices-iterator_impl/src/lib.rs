@@ -2,6 +2,7 @@
 #![no_std]
 
 use core::fmt::{self, Debug, Formatter};
+use utils::OurResult;
 
 /// DNA (DNA nucleotide sequence).  
 /// Implementing [`Eq`] is not necessary, but valid.
@@ -22,7 +23,7 @@ impl<'a> Dna<'a> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> utils::Result<Self> {
+    pub fn new(dna: &'a str) -> OurResult<Self> {
         match utils::check_dna(dna) {
             Ok(()) => Ok(Self(dna)),
             Err(i) => Err(i),
@@ -43,7 +44,7 @@ impl<'a> Rna<'a> {
     /// If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &'a str) -> utils::Result<Self> {
+    pub fn new(rna: &'a str) -> OurResult<Self> {
         match utils::check_rna_str(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
             Err(i) => Err(i),

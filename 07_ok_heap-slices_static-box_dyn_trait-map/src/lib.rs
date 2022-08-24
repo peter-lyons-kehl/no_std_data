@@ -4,6 +4,7 @@ extern crate alloc;
 
 use alloc::boxed::Box;
 use core::fmt::{self, Debug, Formatter};
+use utils::OurResult;
 
 /// DNA (DNA nucleotide sequence).
 ///
@@ -24,7 +25,7 @@ pub enum Rna {
 impl Dna {
     /// Create a new instance with given DNA nucleotides. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'static str) -> utils::Result<Self> {
+    pub fn new(dna: &'static str) -> OurResult<Self> {
         match utils::check_dna(dna) {
             Ok(()) => Ok(Self(dna)),
             Err(i) => Err(i),
@@ -43,7 +44,7 @@ impl Dna {
 impl Rna {
     /// Create a new instance with given RNA nucleotides. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &'static str) -> utils::Result<Self> {
+    pub fn new(rna: &'static str) -> OurResult<Self> {
         match utils::check_rna_str(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
             Err(i) => Err(i),
@@ -94,13 +95,14 @@ pub mod test {
     // Unit tests of a `no_std` crate can't use `std` either. However, they can use heap.
     extern crate alloc;
     use alloc::format;
+    use utils::OurResult;
 
     #[test]
     /// Test both [`Dna::new`](super::Dna::new), and (primarily) [`core::fmt::Debug::fmt`] on
     /// [`Rna`](super::Rna). If [`Dna::new`](super::Dna::new) fails, it  
     /// returns [`Err`] containing `usize` index of the offending nucleotide (`char`), and this
     /// function then returns that [`Err`].
-    fn test_rna_given_nucleotides_debug() -> utils::Result<()> {
+    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
         super::Dna::new("GCTA").map(|dna| {
             let rna = dna.into_rna();
             let rna_dbg = format!("{:?}", rna);

@@ -4,6 +4,7 @@ extern crate alloc;
 
 use alloc::{borrow::ToOwned, string::String};
 use core::fmt::Debug;
+use utils::OurResult;
 
 /// DNA (DNA nucleotide sequence).  
 ///
@@ -24,7 +25,7 @@ impl Dna {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &str) -> utils::Result<Self> {
+    pub fn new(dna: &str) -> OurResult<Self> {
         match utils::check_dna(dna) {
             Ok(()) => Ok(Self(dna.to_owned())),
             Err(i) => Err(i),
@@ -47,7 +48,7 @@ impl Rna {
     /// Create a new [`Rna`] instance with given RNA nucleotides. If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &str) -> utils::Result<Self> {
+    pub fn new(rna: &str) -> OurResult<Self> {
         match utils::check_rna_str(rna) {
             Ok(()) => Ok(Self(rna.to_owned())),
             Err(i) => Err(i),

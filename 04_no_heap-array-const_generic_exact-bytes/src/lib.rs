@@ -1,6 +1,8 @@
 //! no_std heapless (bare metal/embedded-friendly)
 #![no_std]
 
+use utils::OurResult;
+
 /// DNA (DNA nucleotide sequence).
 ///
 /// `const N` parameter does not affect storage of this type. It's used only to infer respective
@@ -19,7 +21,7 @@ impl<'a, const N: usize> Dna<'a, N> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> utils::Result<Self> {
+    pub fn new(dna: &'a str) -> OurResult<Self> {
         utils::check_dna(dna)?;
         Ok(Self(dna))
     }
@@ -33,10 +35,10 @@ impl<'a, const N: usize> Dna<'a, N> {
 }
 
 impl<const N: usize> Rna<N> {
-    pub fn new(rna: &str) -> utils::Result<Self> {
+    pub fn new(rna: &str) -> OurResult<Self> {
         Self::new_from_iter(rna.chars())
     }
-    pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> utils::Result<Self> {
+    pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
         //let mut result = Self(core::array::from_fn(|_| Default::default()));
         // Can't `result.0.copy_from_slice(rna)` - because `result.0` is `&[char]`.
         let result = Self(core::array::from_fn(|_| {

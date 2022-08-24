@@ -4,6 +4,7 @@
 // @TODO Others: remove import of Debug - where it's derived only
 
 use core::fmt::{self, Debug, Formatter};
+use utils::OurResult;
 
 const MAX_NUM_RNA_NUCLEOTIDES: usize = 14;
 
@@ -33,7 +34,7 @@ pub struct Rna {
 }
 
 impl<'a> Dna<'a> {
-    pub fn new(dna: &'a str) -> utils::Result<Self> {
+    pub fn new(dna: &'a str) -> OurResult<Self> {
         // @TODO in other projects: use ? op, and add a link
         utils::check_dna(dna)?;
         Ok(Self(dna))
@@ -49,11 +50,11 @@ impl Rna {
     /// If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new<'a>(rna: &'a str) -> utils::Result<Self> {
+    pub fn new<'a>(rna: &'a str) -> OurResult<Self> {
         Self::new_from_iter(rna.chars())
     }
 
-    fn new_from_iter(rna_iter: impl Iterator<Item = char>) -> utils::Result<Self> {
+    fn new_from_iter(rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
         let mut result = Rna::default();
         for c in rna_iter {
             result.rna[result.len] = c;

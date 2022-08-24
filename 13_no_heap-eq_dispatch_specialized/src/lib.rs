@@ -2,6 +2,7 @@
 #![no_std]
 
 use core::fmt::{self, Debug, Formatter};
+use utils::OurResult;
 
 /// DNA (DNA nucleotide sequence).
 ///
@@ -23,7 +24,7 @@ impl<'a> Dna<'a> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> utils::Result<Self> {
+    pub fn new(dna: &'a str) -> OurResult<Self> {
         utils::check_dna(dna)?;
         Ok(Self(dna))
     }
@@ -42,7 +43,7 @@ impl<'a> Rna<'a> {
     /// If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &'a str) -> utils::Result<Self> {
+    pub fn new(rna: &'a str) -> OurResult<Self> {
         match utils::check_rna_str(rna) {
             Ok(()) => Ok(Self::GivenNucleotides(rna)),
             Err(i) => Err(i),
@@ -111,13 +112,14 @@ pub mod test {
     // the crate being tested doesn't have access to heap).
     extern crate alloc;
     use alloc::format;
+    use utils::OurResult;
 
     #[test]
     /// Test both [`Dna::new`](super::Dna::new), and (primarily) [`core::fmt::Debug::fmt`] on
     /// [`Rna`](super::Rna). If [`Dna::new`](super::Dna::new) fails, it  
     /// returns [`Err`] containing `usize` index of the offending nucleotide (`char`), and this
     /// function then returns that [`Err`].
-    fn test_rna_given_nucleotides_debug() -> utils::Result<()> {
+    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
         super::Dna::new("GCTA").map(|dna| {
             let rna = dna.into_rna();
             let rna_dbg = format!("{:?}", rna);

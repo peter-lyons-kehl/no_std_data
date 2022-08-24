@@ -4,13 +4,13 @@
 const DNA_NUCLEOTIDES: &str = "GCTA";
 const RNA_NUCLEOTIDES: &str = "CGAU";
 
-pub type Result<T> = core::result::Result<T, usize>;
+pub type OurResult<T> = core::result::Result<T, usize>;
 
 /// Result of [`check`] and related functions.
 ///
 /// It doesn't need to be public (even if used in signatures of public functions here - because
 /// those get exposed with the type resolved, without the alias).
-type CheckResult = Result<()>;
+type CheckResult = OurResult<()>;
 
 /// Check that any characters from `chars_to_be_checked` are in `allowed_chars`. See [`check_dna`]
 /// or [`check_rna_str`] for result type description.

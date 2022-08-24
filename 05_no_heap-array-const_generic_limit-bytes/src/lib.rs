@@ -4,6 +4,7 @@
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
+use utils::OurResult;
 
 const DEFAULT_MAX_NUCLEOTIDES: usize = 12;
 
@@ -37,7 +38,7 @@ impl<'a, const M: usize> DnaImpl<'a, M> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> utils::Result<Self> {
+    pub fn new(dna: &'a str) -> OurResult<Self> {
         utils::check_dna(dna)?;
         Ok(Self(dna))
     }
@@ -51,10 +52,10 @@ impl<'a, const M: usize> DnaImpl<'a, M> {
 }
 
 impl<const M: usize> RnaImpl<M> {
-    pub fn new(rna: &str) -> utils::Result<Self> {
+    pub fn new(rna: &str) -> OurResult<Self> {
         Self::new_from_iter(rna.chars())
     }
-    pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> utils::Result<Self> {
+    pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
         let mut len = 0usize;
         let rna = core::array::from_fn(|_| {
             if let Some(c) = rna_iter.next() {

@@ -2,6 +2,7 @@
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
+use utils::OurResult;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Dna<'a>(&'a str);
@@ -17,7 +18,7 @@ pub enum Rna<'a> {
 //pub struct RnaShared<'a> {}
 
 impl<'a> Dna<'a> {
-    pub fn new(dna: &'a str) -> utils::Result<Self> {
+    pub fn new(dna: &'a str) -> OurResult<Self> {
         utils::check_dna(dna)?;
         Ok(Self(dna))
     }
@@ -31,7 +32,7 @@ impl<'a> Dna<'a> {
 }
 
 impl<'a> Rna<'a> {
-    pub fn new(rna: &'a str) -> utils::Result<Self> {
+    pub fn new(rna: &'a str) -> OurResult<Self> {
         utils::check_rna_str(rna)?;
         Ok(Self::GivenNucleotides(rna))
     }
@@ -39,7 +40,7 @@ impl<'a> Rna<'a> {
     fn new_from_iter_and_storage<'s>(
         rna_iter: impl Iterator<Item = char>,
         storage: &'s mut [u8],
-    ) -> utils::Result<Self>
+    ) -> OurResult<Self>
     where
         's: 'a,
     {
