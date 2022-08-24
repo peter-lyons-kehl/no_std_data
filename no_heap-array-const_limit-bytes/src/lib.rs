@@ -24,7 +24,9 @@ pub struct Dna<'a>(&'a str);
 /// Security: Properly implementing similar types is difficult. Otherwise they may leak older data.
 /// (Wiping out such data is not in our scope.)
 ///
-/// Deriving [`Default`] makes the new instance valid, because it sets `len` to 0.
+/// Deriving [`Default`] makes the new instance valid, because it sets `len` to 0. However, this
+/// works only up to a fixed limit (25?). Otherwise we'd need to initialize the array ourselves with
+/// [`core::array::from_fn`].
 #[derive(Default, Clone)]
 pub struct Rna {
     rna: [u8; MAX_NUM_RNA_NUCLEOTIDES],

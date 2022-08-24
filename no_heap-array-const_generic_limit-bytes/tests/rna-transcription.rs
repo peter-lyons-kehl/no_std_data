@@ -34,20 +34,20 @@ fn test_invalid_rna_input() {
 #[test]
 fn test_acid_equals_acid() {
     assert_eq!(
-        <dna::Dna<3>>::new("CGA").unwrap(),
-        dna::Dna::new("CGA").unwrap()
+        <dna::Dna<50>>::new("CGA").unwrap(),
+        <dna::Dna<80>>::new("CGA").unwrap()
     );
     assert_ne!(
-        <dna::Dna<3>>::new("CGA").unwrap(),
-        dna::Dna::new("AGC").unwrap()
+        <dna::Dna<10>>::new("CGA").unwrap(),
+        <dna::Dna<20>>::new("AGC").unwrap()
     );
     assert_eq!(
         <dna::Rna<3>>::new("CGA").unwrap(),
-        <dna::Rna<5>>::new("CGA").unwrap()
+        <dna::Rna<50>>::new("CGA").unwrap()
     );
     assert_ne!(
         <dna::Rna<3>>::new("CGA").unwrap(),
-        dna::Rna::new("AGC").unwrap()
+        <dna::Rna<7>>::new("AGC").unwrap()
     );
 }
 
@@ -55,31 +55,31 @@ fn test_acid_equals_acid() {
 fn test_transcribes_cytosine_guanine() {
     assert_eq!(
         <dna::Rna<1>>::new("G").unwrap(),
-        dna::Dna::new("C").unwrap().into_rna()
+        <dna::Dna<9>>::new("C").unwrap().into_rna()
     );
 }
 
 #[test]
 fn test_transcribes_guanine_cytosine() {
     assert_eq!(
-        <dna::Rna<1>>::new("C").unwrap(),
-        dna::Dna::new("G").unwrap().into_rna()
+        <dna::Rna<20>>::new("C").unwrap(),
+        <dna::Dna<10>>::new("G").unwrap().into_rna()
     );
 }
 
 #[test]
 fn test_transcribes_adenine_uracil() {
     assert_eq!(
-        <dna::Rna<1>>::new("U").unwrap(),
-        dna::Dna::new("A").unwrap().into_rna()
+        <dna::Rna<10>>::new("U").unwrap(),
+        <dna::Dna<20>>::new("A").unwrap().into_rna()
     );
 }
 
 #[test]
 fn test_transcribes_thymine_to_adenine() {
     assert_eq!(
-        <dna::Rna<1>>::new("A").unwrap(),
-        dna::Dna::new("T").unwrap().into_rna()
+        <dna::Rna<5>>::new("A").unwrap(),
+        <dna::Dna<8>>::new("T").unwrap().into_rna()
     );
 }
 
@@ -87,6 +87,6 @@ fn test_transcribes_thymine_to_adenine() {
 fn test_transcribes_all_dna_to_rna() {
     assert_eq!(
         <dna::Rna<12>>::new("UGCACCAGAAUU").unwrap(),
-        dna::Dna::new("ACGTGGTCTTAA").unwrap().into_rna()
+        <dna::Dna<20>>::new("ACGTGGTCTTAA").unwrap().into_rna()
     )
 }
