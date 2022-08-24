@@ -1,0 +1,6 @@
+[package]
+edition = "2021"
+name = "no_heap-array-const_generic_exact-chars"
+version = "1.0.0"
+[dependencies]
+shared = { path = "../shared" }

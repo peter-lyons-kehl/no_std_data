@@ -24,16 +24,22 @@ pub fn check_dna(dna: &str) -> CheckResult {
     check(dna.chars(), DNA_NUCLEOTIDES)
 }
 
+/// Check that `rna_iter` yields RNA nucleotides only. On success return [`Ok(())`](Ok). On error
+/// return [`Err`] with a 0-based index of the first incorrect character.
+pub fn check_rna_char_iter(rna_iter: impl Iterator<Item = char>) -> CheckResult {
+    check(rna_iter, RNA_NUCLEOTIDES)
+}
+
 /// Check that `rna` contains RNA nucleotides only. On success return [`Ok(())`](Ok). On error
 /// return [`Err`] with a 0-based index of the first incorrect character.
 pub fn check_rna_str(rna: &str) -> CheckResult {
-    check(rna.chars(), RNA_NUCLEOTIDES)
+    check_rna_char_iter(rna.chars())
 }
 
 /// Check that `rna` contains RNA nucleotides only. On success return [`Ok(())`](Ok). On error
 /// return [`Err`] with a 0-based index of the first incorrect character.
 pub fn check_rna_chars(rna: &[char]) -> CheckResult {
-    check(rna.iter().cloned(), RNA_NUCLEOTIDES)
+    check_rna_char_iter(rna.iter().cloned())
 }
 
 /// Translate DNA nucleotide `dna_nucl` to a RNA nucleaotide. [`panic`] if `dna_nucl` is invalid.

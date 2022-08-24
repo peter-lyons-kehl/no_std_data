@@ -9,7 +9,8 @@ const MAX_NUM_RNA_NUCLEOTIDES: usize = 14;
 
 // @TODO Others: Derive/impl Clone.
 
-/// DNA (DNA nucleotide sequence). `Dna` itself is `&str` slice-based. (Sufficient for our purpose.) Only `Rna` is array-based.
+/// DNA (DNA nucleotide sequence). `Dna` itself is `&str` slice-based. (Sufficient for our purpose.)
+/// Only `Rna` is array-based.
 ///
 /// Implementing [`Eq`] is not necessary, but valid.
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -22,11 +23,11 @@ pub struct Dna<'a>(&'a str);
 ///
 /// Security: Properly implementing similar types is difficult. Otherwise they may leak older data.
 /// (Wiping out such data is not in our scope.)
-/// 
+///
 /// Deriving [`Default`] makes the new instance valid, because it sets `len` to 0.
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Rna {
-    rna: [char; MAX_NUM_RNA_NUCLEOTIDES],
+    rna: [u8; MAX_NUM_RNA_NUCLEOTIDES],
     len: usize,
 }
 
@@ -43,8 +44,7 @@ impl<'a> Dna<'a> {
 }
 
 impl Rna {
-    /// Create a new [`Rna`] instance with given RNA nucleotides -[`Rna::GivenNucleotides`] variant.
-    /// If `rna` is valid, return  
+    /// Create a new [`Rna`] instance with given RNA nucleotides. If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new<'a>(rna: &'a str) -> Result<Self, usize> {
@@ -54,31 +54,30 @@ impl Rna {
     fn new_from_iter(rna_iter: impl Iterator<Item = char>) -> Result<Self, usize> {
         let mut result = Rna::default();
         for c in rna_iter {
-            result.rna[result.len] = c;
+            result.rna[result.len] = c as u8;
             result.len += 1;
         }
-        shared::check_rna_chars(result.chars())?;
+        // This would not work for Unicode in general.
+        shared::check_rna_char_iter(result.bytes().iter().map(|&b| b as char))?;
         Ok(result)
     }
 
-    fn chars(&self) -> &[char] {
+    fn bytes(&self) -> &[u8] {
         &self.rna[..self.len]
     }
 }
 
 impl PartialEq for Rna {
     fn eq(&self, other: &Self) -> bool {
-        self.chars() == other.chars()
+        self.bytes() == other.bytes()
     }
 }
 /// Not necessary, but valid.
 impl Eq for Rna {}
 
 impl Debug for Rna {
-    /// Compared to [../../no_heap-slices-iterator]([../../no_heap-slices-iterator),
-    /// [Self::DnaBased] variant here doesn't have `self.iter()`. So we map DNA to RNA chars here.
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "RNA {{{:?}}}", self.chars())
+        write!(f, "RNA {{{:?}}}", self.bytes())
     }
 }
 
@@ -97,7 +96,7 @@ pub mod test {
         super::Dna::new("GCTA").map(|dna| {
             let rna = dna.into_rna();
             let rna_dbg = format!("{:?}", rna);
-            assert_eq!("RNA {['C', 'G', 'A', 'U']}", rna_dbg.as_str());
+            assert_eq!("RNA {[67, 71, 65, 85]}", rna_dbg.as_str());
         });
     }
 }

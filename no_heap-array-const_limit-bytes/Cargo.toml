@@ -1,6 +1,6 @@
 [package]
 edition = "2021"
-name = "no_heap-return-array_chars"
+name = "no_heap-array-const_limit-bytes"
 version = "1.0.0"
 [dependencies]
 shared = { path = "../shared" }
