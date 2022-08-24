@@ -3,6 +3,7 @@
 #![feature(array_try_from_fn)]
 
 use core::fmt::{self, Debug, Formatter};
+use core::str;
 
 const DEFAULT_MAX_NUCLEOTIDES: usize = 12;
 
@@ -90,7 +91,11 @@ impl Eq for Rna {}
 
 impl<const N: usize> Debug for Rna<N> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "RNA {{{:?}}}", self.bytes())
+        write!(
+            f,
+            "RNA {{{}}}",
+            str::from_utf8(self.bytes()).expect("UTF-8 encoded string")
+        )
     }
 }
 
@@ -109,7 +114,7 @@ pub mod test {
         <super::Dna<20>>::new("GCTA").map(|dna| {
             let rna = dna.into_rna();
             let rna_dbg = format!("{:?}", rna);
-            assert_eq!("RNA {[67, 71, 65, 85]}", rna_dbg.as_str());
+            assert_eq!("RNA {CGAU}", rna_dbg.as_str());
         });
     }
 }

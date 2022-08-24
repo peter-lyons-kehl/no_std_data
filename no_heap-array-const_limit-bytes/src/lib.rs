@@ -4,6 +4,7 @@
 // @TODO Others: remove import of Debug - where it's derived only
 
 use core::fmt::{self, Debug, Formatter};
+use core::str;
 
 const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
 
@@ -79,16 +80,16 @@ impl Eq for Rna {}
 
 impl Debug for Rna {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "RNA {{{:?}}}", self.bytes())
+        write!(
+            f,
+            "RNA {{{}}}",
+            str::from_utf8(self.bytes()).expect("UTF-8 encoded string")
+        )
     }
 }
 
 #[cfg(test)]
 pub mod test {
-    //! Test(s) on top of Exercism's tests (which are in `../tests/`).
-
-    // Unit tests of a `no_std` crate can't use `std` either. However, they can use heap (even if
-    // the crate being tested doesn't have access to heap).
     extern crate alloc;
     use alloc::format;
 
@@ -98,7 +99,7 @@ pub mod test {
         super::Dna::new("GCTA").map(|dna| {
             let rna = dna.into_rna();
             let rna_dbg = format!("{:?}", rna);
-            assert_eq!("RNA {[67, 71, 65, 85]}", rna_dbg.as_str());
+            assert_eq!("RNA {CGAU}", rna_dbg.as_str());
         });
     }
 }
