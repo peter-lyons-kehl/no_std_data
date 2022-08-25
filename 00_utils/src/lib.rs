@@ -4,6 +4,9 @@
 const DNA_NUCLEOTIDES: &str = "GCTA";
 const RNA_NUCLEOTIDES: &str = "CGAU";
 
+/// Custom result type. It works with our Exercism exercise (the error variant uses `usize` to
+/// indicate a 0-based character index that is not a valid DNA/RNA nucleotide, as per use case).
+/// Type parameter `T` is the success variant type, carrying a result as needed.
 pub type OurResult<T> = core::result::Result<T, usize>;
 
 /// Result of [`check`] and related functions.
@@ -61,19 +64,19 @@ pub fn dna_to_rna(dna_nucl: char) -> char {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn check_dna_rna_valid() {
+    fn test_check_dna_rna_valid() {
         assert!(super::check_dna("GCTA").is_ok());
         assert!(super::check_rna_str("CGAU").is_ok());
     }
 
     #[test]
-    fn check_dna_rna_invalid() {
+    fn test_check_dna_rna_invalid() {
         assert_eq!(super::check_dna("CU"), Err(1));
         assert_eq!(super::check_rna_str("CT"), Err(1));
     }
 
     #[test]
-    fn dna_to_rna() {
+    fn test_dna_to_rna() {
         assert_eq!(super::dna_to_rna('G'), 'C');
         assert_eq!(super::dna_to_rna('C'), 'G');
         assert_eq!(super::dna_to_rna('T'), 'A');
@@ -82,7 +85,33 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn dna_to_rna_panic_invalid() {
+    fn test_dna_to_rna_panic_invalid() {
         super::dna_to_rna('U');
+    }
+
+    #[test]
+    fn test_check_dna() {
+        assert!(super::check_dna("GCTA").is_ok());
+        assert_eq!(super::check_dna("U"), Err(0));
+        assert_eq!(super::check_dna("GX"), Err(1));
+    }
+
+    #[test]
+    fn test_check_rna_iter() {
+        assert!(super::check_rna_char_iter("CGAU".chars()).is_ok());
+        assert_eq!(super::check_rna_char_iter("T".chars()), Err(0));
+        assert_eq!(super::check_rna_char_iter("GX".chars()), Err(1));
+    }
+    #[test]
+    fn test_check_rna_str() {
+        assert!(super::check_rna_str("CGAU").is_ok());
+        assert_eq!(super::check_rna_str("T"), Err(0));
+        assert_eq!(super::check_rna_str("GX"), Err(1));
+    }
+    #[test]
+    fn test_check_rna_chars() {
+        assert!(super::check_rna_chars(&['C', 'G', 'A', 'U']).is_ok());
+        assert_eq!(super::check_rna_chars(&['T']), Err(0));
+        assert_eq!(super::check_rna_chars(&['G', 'X']), Err(1));
     }
 }

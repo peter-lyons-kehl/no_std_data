@@ -74,8 +74,8 @@ impl<const M: usize> RnaImpl<M> {
         Ok(Self { rna, len })
     }
 
-    fn bytes(&self) -> &[u8] {
-        &self.rna[..self.len]
+    fn as_str(&self) -> &str {
+        str::from_utf8(&self.rna[..self.len]).expect("UTF-8 encoded string of RNA nucleotides")
     }
 }
 
@@ -88,7 +88,7 @@ impl<'a, const M: usize> Eq for DnaImpl<'a, M> {}
 
 impl<const L: usize, const R: usize> PartialEq<RnaImpl<R>> for RnaImpl<L> {
     fn eq(&self, other: &RnaImpl<R>) -> bool {
-        self.bytes() == other.bytes()
+        self.as_str() == other.as_str()
     }
 }
 /// Not necessary, but valid.
@@ -96,11 +96,7 @@ impl Eq for RnaImpl {}
 
 impl<const N: usize> Debug for RnaImpl<N> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(
-            f,
-            "RNA {{{}}}",
-            str::from_utf8(self.bytes()).expect("UTF-8 encoded string")
-        )
+        write!(f, "RNA {{{}}}", self.as_str())
     }
 }
 

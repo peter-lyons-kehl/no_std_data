@@ -62,18 +62,18 @@ impl Rna {
             result.len += 1;
         }
         // This would not work for Unicode in general.
-        utils::check_rna_char_iter(result.bytes().iter().map(|&b| b as char))?;
+        utils::check_rna_str(result.as_str())?;
         Ok(result)
     }
 
-    fn bytes(&self) -> &[u8] {
-        &self.rna[..self.len]
+    fn as_str(&self) -> &str {
+        str::from_utf8(&self.rna[..self.len]).expect("UTF-8 encoded string of RNA nucleotides")
     }
 }
 
 impl PartialEq for Rna {
     fn eq(&self, other: &Self) -> bool {
-        self.bytes() == other.bytes()
+        self.as_str() == other.as_str()
     }
 }
 /// Not necessary, but valid.
@@ -81,11 +81,7 @@ impl Eq for Rna {}
 
 impl Debug for Rna {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(
-            f,
-            "RNA {{{}}}",
-            str::from_utf8(self.bytes()).expect("UTF-8 encoded string")
-        )
+        write!(f, "RNA {{{}}}", self.as_str())
     }
 }
 
