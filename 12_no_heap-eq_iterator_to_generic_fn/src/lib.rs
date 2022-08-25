@@ -25,7 +25,7 @@ impl<'a> Dna<'a> {
         }
     }
 
-    pub fn into_rna(self) -> Rna<'a> {
+    pub fn into_rna(&self) -> Rna<'a> {
         match self {
             Dna(dna) => Rna::DnaBased(dna),
         }

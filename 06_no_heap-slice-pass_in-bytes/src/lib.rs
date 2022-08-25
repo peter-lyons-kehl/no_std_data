@@ -26,7 +26,7 @@ impl<'a> Dna<'a> {
         Ok(Self(dna))
     }
 
-    pub fn into_rna<'s>(self, storage: &'s mut [u8]) -> Rna
+    pub fn into_rna<'s>(&self, storage: &'s mut [u8]) -> Rna
     where
         's: 'a,
     {

@@ -8,6 +8,8 @@ implementations of Exercism's Rust Track "RNA Transcription" exercise.
 # Suggested order
 
 # Omitted documentation
+Big parts of these examples are repetitive. For brevity, similar items are docummented only once: at
+their first occurrence (as in the above order).
 
 # Exercism
 One implementation required a minor change to its Exercism's tests.

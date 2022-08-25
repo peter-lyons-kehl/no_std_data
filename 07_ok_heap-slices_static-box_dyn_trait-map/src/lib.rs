@@ -34,7 +34,7 @@ impl Dna {
 
     /// Create a [DNA-based variant of `Rna`](Rna::GivenNucleotides) instance, based on `self`. No
     /// transformation/iteration is done yet - see [`Rna::DnaBased`].
-    pub fn into_rna(self) -> Rna {
+    pub fn into_rna(&self) -> Rna {
         match self {
             Dna(dna) => Rna::DnaBased(dna),
         }

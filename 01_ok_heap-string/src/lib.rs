@@ -34,7 +34,7 @@ impl Dna {
 
     /// Create an [`Rna`] instance based on `self`. Transcript all nucleotides to RNA (and store
     /// them in the result [`Rna`] instance).
-    pub fn into_rna(self) -> Rna {
+    pub fn into_rna(&self) -> Rna {
         match self {
             Dna(dna) => {
                 let rna_chars = dna.chars().map(utils::dna_to_rna).collect();

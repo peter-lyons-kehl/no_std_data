@@ -29,7 +29,7 @@ impl<'a, const N: usize> Dna<'a, N> {
     /// Create an [`Rna`] instance, based on `self`. The returned instance contains the translated
     /// nucleotides. (The result doesn't depend on the original [`Dna`] instance's lifetime).
     /// TODO add similar doc to `ok_heap_string`.
-    pub fn into_rna(self) -> Rna<N> {
+    pub fn into_rna(&self) -> Rna<N> {
         Rna::new_from_iter(self.0.chars().map(utils::dna_to_rna)).expect("RNA sequence")
     }
 }

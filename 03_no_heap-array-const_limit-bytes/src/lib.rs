@@ -42,7 +42,7 @@ impl<'a> Dna<'a> {
         Ok(Self(dna))
     }
 
-    pub fn into_rna(self) -> Rna {
+    pub fn into_rna(&self) -> Rna {
         Rna::new_from_iter(self.0.chars().map(utils::dna_to_rna)).expect("RNA")
     }
 }
