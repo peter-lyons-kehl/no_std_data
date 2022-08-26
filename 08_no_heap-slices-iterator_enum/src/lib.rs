@@ -5,12 +5,10 @@ use core::fmt::{self, Debug, Formatter};
 use core::str::Chars;
 use utils::OurResult;
 
-/// DNA (DNA nucleotide sequence).  
-/// Implementing [`Eq`] is not necessary, but valid.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
 
-/// RNA (RNA nucleotide sequence).
+#[derive(Clone, Copy)]
 pub enum Rna<'a> {
     /// Represented by given RNA nucleotides. Returned by [`Rna::new`].
     GivenNucleotides(&'a str),
@@ -25,10 +23,8 @@ impl<'a> Dna<'a> {
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(dna: &'a str) -> OurResult<Self> {
-        match utils::check_dna(dna) {
-            Ok(()) => Ok(Self(dna)),
-            Err(i) => Err(i),
-        }
+        utils::check_dna(dna)?;
+        Ok(Self(dna))
     }
 
     /// Create a [DNA-based variant of `Rna`](Rna::GivenNucleotides) instance, based on `self`. No
@@ -54,10 +50,8 @@ impl<'a> Rna<'a> {
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(rna: &'a str) -> OurResult<Self> {
-        match utils::check_rna_str(rna) {
-            Ok(()) => Ok(Self::GivenNucleotides(rna)),
-            Err(i) => Err(i),
-        }
+        utils::check_rna_str(rna)?;
+        Ok(Self::GivenNucleotides(rna))
     }
 
     /// Create an [`RnaIterator`] over `self`'s RNA nucleotides (chars). For  
@@ -99,21 +93,12 @@ impl<'a> PartialEq for Rna<'a> {
         self.iter().eq(other.iter())
     }
 }
-/// Not necessary for our purpose, but valid.
 impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
         write!(f, "RNA {{")?;
-        match self {
-            Rna::GivenNucleotides(rna) => {
-                write!(f, "GivenNucleotides {{{rna}}}")?;
-            }
-            Rna::DnaBased(dna) => {
-                write!(f, "DnaBased {{{dna}}} which translates to ")?;
-                self.iter().try_for_each(|c| write!(f, "{c}"))?;
-            }
-        }
+        self.iter().try_for_each(|c| write!(f, "{c}"))?;
         write!(f, "}}")
     }
 }
@@ -125,18 +110,23 @@ pub mod test {
     // Unit tests of a `no_std` crate can't use `std` either. However, they can use heap (even if
     // the crate being tested doesn't have access to heap).
     extern crate alloc;
+    use super::OurResult;
     use alloc::format;
 
     #[test]
-    #[allow(unused_must_use)]
-    fn test_rna_given_nucleotides_debug() {
-        super::Dna::new("GCTA").map(|dna| {
-            let rna = dna.into_rna();
-            let rna_dbg = format!("{:?}", rna);
-            assert_eq!(
-                "RNA {DnaBased {GCTA} which translates to CGAU}",
-                rna_dbg.as_str()
-            );
-        });
+    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
+        let rna = super::Rna::new("CGAU")?;
+        let rna_dbg = format!("{:?}", rna);
+        assert_eq!("RNA {CGAU}", rna_dbg);
+        Ok(())
+    }
+
+    #[test]
+    fn test_rna_from_dna_debug() -> OurResult<()> {
+        let dna = super::Dna::new("GCTA")?;
+        let rna = dna.into_rna();
+        let rna_dbg = format!("{:?}", rna);
+        assert_eq!("RNA {CGAU}", rna_dbg);
+        Ok(())
     }
 }

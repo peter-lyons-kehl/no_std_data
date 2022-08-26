@@ -1,6 +1,8 @@
 //! no_std heapless (bare metal/embedded-friendly)
 #![no_std]
-#![feature(array_try_from_fn)]
+// Needed as of August 2022, only for RnaImpl::clone_max_size.
+#![allow(incomplete_features)]
+#![feature(generic_const_exprs)]
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
@@ -13,8 +15,9 @@ const DEFAULT_MAX_NUCLEOTIDES: usize = 12;
 /// `const N` parameter does not affect storage of this type. It's used only to infer respective
 /// ['Rna`] size when calling [`Dna::into_rna`].
 ///
-/// We can't derive [`PartialEq`]. Why? Because we want to compare [`Rna`] types regardless of `M`.
-#[derive(Debug, Clone)]
+/// We don't derive [`PartialEq`]. Why? Because we want to compare [`Dna`] types regardless of `M`.
+/// (And for security & correctness, if we added mutation methods.)
+#[derive(Debug, Clone, Copy)]
 pub struct DnaImpl<'a, const M: usize = DEFAULT_MAX_NUCLEOTIDES>(&'a str);
 
 pub type Dna<'a> = DnaImpl<'a, DEFAULT_MAX_NUCLEOTIDES>;
@@ -24,9 +27,12 @@ pub type Dna<'a> = DnaImpl<'a, DEFAULT_MAX_NUCLEOTIDES>;
 /// Usable only if the required `const N` parameter is known in compile time. Can't derive Default -
 /// it's defined for arrays only up to a certain size.
 ///
-/// We can't derive [`PartialEq`] or [`Debug`]. Why? Because an `Rna` instance may contain leftover
-/// nucleotides - insecure! Also, we want to compare [`Rna`] types regardless of `M`.
-#[derive(Clone)]
+/// We don't derive [`PartialEq`] or [`Debug`] or [`Clone`] or [`Copy`] (neither Serde's
+/// `Serialize`, if we used it). See
+/// [02_no_heap-array-const_limit-chars](../../02_no_heap-array-const_limit-chars/src/lib.rs) for
+/// notes on security.
+///
+/// We don't derive [`PartialEq`] for the same reason as in [`DnaImpl`].
 pub struct RnaImpl<const M: usize = DEFAULT_MAX_NUCLEOTIDES> {
     rna: [u8; M],
     len: usize,
@@ -69,13 +75,29 @@ impl<const M: usize> RnaImpl<M> {
             // Extra characters left.
             return Err(len);
         }
+        let result = Self { rna, len };
         // Only check the valid items: `0..len`. Hence `Iterator::take`.
-        utils::check_rna_char_iter(rna.iter().take(len).map(|&b| b as char))?;
-        Ok(Self { rna, len })
+        utils::check_rna_str(result.as_str())?;
+        Ok(result)
     }
 
     fn as_str(&self) -> &str {
         str::from_utf8(&self.rna[..self.len]).expect("UTF-8 encoded string of RNA nucleotides")
+    }
+
+    pub fn clone_max_size<const N: usize>(&self) -> RnaImpl<N> {
+        assert!(self.len <= N, "Calling clone_max_size on an instance with len={}, but the target maximum size is insufficient: {}.", self.len, N);
+        let mut rna = [u8::default(); N];
+        for i in 0..self.len {
+            rna[i] = self.rna[i];
+        }
+        RnaImpl { rna, len: self.len }
+    }
+}
+
+impl<const M: usize> Clone for RnaImpl<M> {
+    fn clone(&self) -> Self {
+        self.clone_max_size::<M>()
     }
 }
 
@@ -94,7 +116,7 @@ impl<const L: usize, const R: usize> PartialEq<RnaImpl<R>> for RnaImpl<L> {
 /// Not necessary, but valid.
 impl Eq for RnaImpl {}
 
-impl<const N: usize> Debug for RnaImpl<N> {
+impl<const M: usize> Debug for RnaImpl<M> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
         write!(f, "RNA {{{}}}", self.as_str())
     }
@@ -107,21 +129,23 @@ pub mod test {
     // Unit tests of a `no_std` crate can't use `std` either. However, they can use heap (even if
     // the crate being tested doesn't have access to heap).
     extern crate alloc;
+    use super::OurResult;
     use alloc::format;
 
-    // @TODO: add & rename - in othre crates
     #[test]
-    fn test_rna_given_nucleotides_debug() {
-        let rna = super::Rna::new("CGAU").expect("Rna");
+    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
+        let rna = super::Rna::new("CGAU")?;
         let rna_dbg = format!("{:?}", rna);
         assert_eq!("RNA {CGAU}", rna_dbg.as_str());
+        Ok(())
     }
 
     #[test]
-    fn test_dna_into_rna_debug() {
-        let dna = <super::DnaImpl<20>>::new("GCTA").expect("Dna");
+    fn test_rna_from_dna_debug() -> OurResult<()> {
+        let dna = <super::DnaImpl<20>>::new("GCTA")?;
         let rna = dna.into_rna();
         let rna_dbg = format!("{:?}", rna);
         assert_eq!("RNA {CGAU}", rna_dbg.as_str());
+        Ok(())
     }
 }

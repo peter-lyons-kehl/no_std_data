@@ -1,43 +1,24 @@
 //! no_std heapless (bare metal/embedded-friendly)
 #![no_std]
 
-// @TODO Others: remove import of Debug - where it's derived only
-
 use core::fmt::{self, Debug, Formatter};
 use core::str;
 
 const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
 
-// @TODO Others: Derive/impl Clone.
-
-/// DNA (DNA nucleotide sequence). `Dna` itself is `&str` slice-based. (Sufficient for our purpose.)
-/// Only `Rna` is array-based.
-///
-/// Implementing [`Eq`] is not necessary, but valid.
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
 use utils::OurResult;
 
-/// RNA (RNA nucleotide sequence). Storing RNA nucleotides.
-///
-/// We can't derive [`PartialEq`] or [`Debug`]. Why? Because an `Rna` instance may contain leftover
-/// nucleotides.
-///
-/// Security: Properly implementing similar types is difficult. Otherwise they may leak older data.
-/// (Wiping out such data is not in our scope.)
-///
-/// Deriving [`Default`] makes the new instance valid, because it sets `len` to 0. However, this
-/// works only up to a fixed limit (25?). Otherwise we'd need to initialize the array ourselves with
-/// [`core::array::from_fn`].
-#[derive(Default, Clone)]
+#[derive(Default)]
 pub struct Rna {
+    // New to Rust? u8 type is an unsigned 8 bit integer, also used to represent a byte.
     rna: [u8; MAX_NUM_RNA_NUCLEOTIDES],
     len: usize,
 }
 
 impl<'a> Dna<'a> {
     pub fn new(dna: &'a str) -> OurResult<Self> {
-        // @TODO in other projects: use ? op, and add a link
         utils::check_dna(dna)?;
         Ok(Self(dna))
     }
@@ -76,7 +57,6 @@ impl PartialEq for Rna {
         self.as_str() == other.as_str()
     }
 }
-/// Not necessary, but valid.
 impl Eq for Rna {}
 
 impl Debug for Rna {
@@ -85,18 +65,36 @@ impl Debug for Rna {
     }
 }
 
+impl Clone for Rna {
+    fn clone(&self) -> Self {
+        let mut rna = [u8::default(); MAX_NUM_RNA_NUCLEOTIDES];
+        for i in 0..self.len {
+            rna[i] = self.rna[i];
+        }
+        Self { rna, len: self.len }
+    }
+}
+
 #[cfg(test)]
 pub mod test {
     extern crate alloc;
+    use super::OurResult;
     use alloc::format;
 
     #[test]
-    #[allow(unused_must_use)]
-    fn test_rna_given_nucleotides_debug() {
-        super::Dna::new("GCTA").map(|dna| {
-            let rna = dna.into_rna();
-            let rna_dbg = format!("{:?}", rna);
-            assert_eq!("RNA {CGAU}", rna_dbg.as_str());
-        });
+    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
+        let rna = super::Rna::new("CGAU")?;
+        let rna_dbg = format!("{:?}", rna);
+        assert_eq!("RNA {CGAU}", rna_dbg);
+        Ok(())
+    }
+
+    #[test]
+    fn test_rna_from_dna_debug() -> OurResult<()> {
+        let dna = super::Dna::new("GCTA")?;
+        let rna = dna.into_rna();
+        let rna_dbg = format!("{:?}", rna);
+        assert_eq!("RNA {CGAU}", rna_dbg);
+        Ok(())
     }
 }

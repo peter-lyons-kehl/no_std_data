@@ -3,18 +3,34 @@
 
 use utils::OurResult;
 
-/// DNA (DNA nucleotide sequence).
+/// Fixed length.
 ///
 /// `const N` parameter does not affect storage of this type. It's used only to infer respective
 /// ['Rna`] size when calling [`Dna::into_rna`].
-#[derive(Debug, PartialEq, Eq, Clone)]
+///
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a, const N: usize>(&'a str);
 
 /// RNA (RNA nucleotide sequence).
 ///
 /// Usable only if the required `const N` parameter is known in compile time. Can't derive Default -
-/// it's defined for arrays only up to a certain size.
-#[derive(Debug, PartialEq, Eq, Clone)]
+/// it's defined for arrays with only up to 32 items.
+///
+/// [`Rna`] in this implementation derives all its traits. It never has any leaking data - it always
+/// uses all its array items. (As a consequence, if we added any mutation methods, those could only
+/// replace data, but never "remove/shorten").
+///
+/// Only instances of types parameterized with same const generic `N` are comparable. Even if we
+/// implemented PartialEq ourselves, it wouldn't make sense to implement it across various lengths.
+///
+/// On the contrary, see
+/// [05_no_heap-array-const_generic_limit-bytes](../../05_no_heap-array-const_generic_limit-bytes/src/lib.rs)
+/// which does compare instances of types parameterized even with different const generic `M`.
+/// However, there `M` is not the actual length, but the maximum length.
+///
+/// This is not Unicode-friendly. For that we'd need to implement [`PartialEq`] ourselves, and
+/// Unicode-proof [`Rna::new_from_iter`].
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Rna<const N: usize>([u8; N]);
 
 impl<'a, const N: usize> Dna<'a, N> {
@@ -27,8 +43,8 @@ impl<'a, const N: usize> Dna<'a, N> {
     }
 
     /// Create an [`Rna`] instance, based on `self`. The returned instance contains the translated
-    /// nucleotides. (The result doesn't depend on the original [`Dna`] instance's lifetime).
-    /// TODO add similar doc to `ok_heap_string`.
+    /// nucleotides. (The result doesn't depend on the original [`Dna`] instance's lifetime). TODO
+    /// add similar doc to `ok_heap_string`.
     pub fn into_rna(&self) -> Rna<N> {
         Rna::new_from_iter(self.0.chars().map(utils::dna_to_rna)).expect("RNA sequence")
     }
@@ -38,7 +54,7 @@ impl<const N: usize> Rna<N> {
     pub fn new(rna: &str) -> OurResult<Self> {
         Self::new_from_iter(rna.chars())
     }
-    pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
+    fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
         //let mut result = Self(core::array::from_fn(|_| Default::default()));
         // Can't `result.0.copy_from_slice(rna)` - because `result.0` is `&[char]`.
         let result = Self(core::array::from_fn(|_| {

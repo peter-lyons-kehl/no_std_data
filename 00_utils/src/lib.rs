@@ -5,9 +5,11 @@ const DNA_NUCLEOTIDES: &str = "GCTA";
 const RNA_NUCLEOTIDES: &str = "CGAU";
 
 /// Custom result type. It works with our Exercism exercise (the error variant uses `usize` to
-/// indicate a 0-based character index that is not a valid DNA/RNA nucleotide, as per use case).
-/// Type parameter `T` is the success variant type, carrying a result as needed.
-pub type OurResult<T> = core::result::Result<T, usize>;
+/// indicate a 0-based character index that is not a valid DNA/RNA nucleotide). Type parameter `T`
+/// is the success variant type, carrying a result as needed.
+///
+// New to Rust? Question mark operator shortcuts on error and returns it here.
+pub type OurResult<T> = Result<T, usize>;
 
 /// Result of [`check`] and related functions.
 ///

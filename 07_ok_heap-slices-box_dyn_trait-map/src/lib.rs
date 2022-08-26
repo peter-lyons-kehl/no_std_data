@@ -9,53 +9,52 @@ use utils::OurResult;
 /// DNA (DNA nucleotide sequence).
 ///
 /// Implementing [`Eq`] is not necessary for our purpose, but valid.
-#[derive(Debug, PartialEq, Eq)]
-pub struct Dna(&'static str);
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub struct Dna<'a>(&'a str);
 
 /// RNA (RNA nucleotide sequence).
-pub enum Rna {
+#[derive(Clone, Copy)]
+pub enum Rna<'a> {
     /// Represented by given RNA nucleotides. Returned by [`Rna::new`].
-    GivenNucleotides(&'static str),
+    GivenNucleotides(&'a str),
     /// Represented by respective DNA nucleotides, but *not* transformed. Instead, methods of this
     /// type generate RNA nucleotides on the fly by iterating when the consumer calls
     /// [`PartialEq::eq`] or [`Debug::fmt`] on `&self`. See [`Rna::iter`].
-    DnaBased(&'static str),
+    DnaBased(&'a str),
 }
 
-impl Dna {
+impl<'a> Dna<'a> {
     /// Create a new instance with given DNA nucleotides. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'static str) -> OurResult<Self> {
-        match utils::check_dna(dna) {
-            Ok(()) => Ok(Self(dna)),
-            Err(i) => Err(i),
-        }
+    pub fn new(dna: &'a str) -> OurResult<Self> {
+        utils::check_dna(dna)?;
+        Ok(Self(dna))
     }
 
     /// Create a [DNA-based variant of `Rna`](Rna::GivenNucleotides) instance, based on `self`. No
     /// transformation/iteration is done yet - see [`Rna::DnaBased`].
-    pub fn into_rna(&self) -> Rna {
+    pub fn into_rna(&self) -> Rna<'a> {
         match self {
             Dna(dna) => Rna::DnaBased(dna),
         }
     }
 }
 
-impl Rna {
+impl<'a> Rna<'a> {
     /// Create a new instance with given RNA nucleotides. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &'static str) -> OurResult<Self> {
-        match utils::check_rna_str(rna) {
-            Ok(()) => Ok(Self::GivenNucleotides(rna)),
-            Err(i) => Err(i),
-        }
+    pub fn new(rna: &'a str) -> OurResult<Self> {
+        utils::check_rna_str(rna)?;
+        Ok(Self::GivenNucleotides(rna))
     }
 
     /// Create an [`Iterator`] over `self`'s RNA nucleotides (chars). For  
     /// [RNA-based variant](Rna::GivenNucleotides) this iterates over the given nucleotides. For  
     /// [DNA-based variant](Rna::DnaBased) this translates the DNA nucleotides to RNA ones on the
-    /// fly (without storing them anywhere). Return the iterator as a boxed `dyn` trait object.
-    fn iter(&self) -> Box<dyn Iterator<Item = char>> {
+    /// fly (without storing them anywhere). Return the iterator as a boxed `dyn` trait object (on
+    /// heap). See also
+    /// https://users.rust-lang.org/t/box-with-a-trait-object-requires-static-lifetime/35261/2.
+    fn iter(&self) -> Box<dyn Iterator<Item = char> + 'a> {
         match *self {
             Rna::GivenNucleotides(rna) => Box::new(rna.chars()),
 
@@ -64,52 +63,42 @@ impl Rna {
     }
 }
 
-impl PartialEq for Rna {
+impl<'a> PartialEq for Rna<'a> {
     fn eq(&self, other: &Self) -> bool {
         self.iter().eq(other.iter())
     }
 }
 /// Not necessary, but valid.
-impl Eq for Rna {}
+impl<'a> Eq for Rna<'a> {}
 
-impl Debug for Rna {
+impl<'a> Debug for Rna<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
         write!(f, "RNA {{")?;
-        match self {
-            Rna::GivenNucleotides(rna) => {
-                write!(f, "GivenNucleotides {{{rna}}}")?;
-            }
-            Rna::DnaBased(dna) => {
-                write!(f, "DnaBased {{{dna}}} which translates to ")?;
-                self.iter().try_for_each(|c| write!(f, "{c}"))?;
-            }
-        }
+        self.iter().try_for_each(|c| write!(f, "{c}"))?;
         write!(f, "}}")
     }
 }
 
 #[cfg(test)]
 pub mod test {
-    //! Test(s) on top of Exercism's tests (which are in `../tests/`).
-
-    // Unit tests of a `no_std` crate can't use `std` either. However, they can use heap.
     extern crate alloc;
     use alloc::format;
     use utils::OurResult;
 
     #[test]
-    /// Test both [`Dna::new`](super::Dna::new), and (primarily) [`core::fmt::Debug::fmt`] on
-    /// [`Rna`](super::Rna). If [`Dna::new`](super::Dna::new) fails, it  
-    /// returns [`Err`] containing `usize` index of the offending nucleotide (`char`), and this
-    /// function then returns that [`Err`].
     fn test_rna_given_nucleotides_debug() -> OurResult<()> {
-        super::Dna::new("GCTA").map(|dna| {
-            let rna = dna.into_rna();
-            let rna_dbg = format!("{:?}", rna);
-            assert_eq!(
-                "RNA {DnaBased {GCTA} which translates to CGAU}",
-                rna_dbg.as_str()
-            );
-        })
+        let rna = super::Rna::new("CGAU")?;
+        let rna_dbg = format!("{:?}", rna);
+        assert_eq!("RNA {CGAU}", rna_dbg);
+        Ok(())
+    }
+
+    #[test]
+    fn test_rna_from_dna_debug() -> OurResult<()> {
+        let dna = super::Dna::new("GCTA")?;
+        let rna = dna.into_rna();
+        let rna_dbg = format!("{:?}", rna);
+        assert_eq!("RNA {CGAU}", rna_dbg);
+        Ok(())
     }
 }

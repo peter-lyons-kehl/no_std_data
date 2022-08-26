@@ -1,4 +1,4 @@
-use ok_heap_slices_static_box_dyn_trait_map as dna;
+use ok_heap_slices_box_dyn_trait_map as dna;
 
 #[test]
 fn test_valid_dna_input() {

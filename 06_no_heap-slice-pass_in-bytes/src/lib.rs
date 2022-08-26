@@ -7,8 +7,12 @@ use utils::OurResult;
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Dna<'a>(&'a str);
 
-/// This can't derive, neither implement, [`Clone`]. Why? Because mutable reference (contained in
-/// this type) can't be cloned.
+/// This can't derive, neither implement, [`Clone`]. Why? Because a mutable reference (`rna` field)
+/// can't be cloned.
+///
+/// New to Rust? We can't just clone the referenced data and use a new reference, because any data
+/// in Rust has to be owned from exactly one place. However,  the goal of this implementation is not
+/// to own the data,  but to (mutably) refer to it instead.
 pub enum Rna<'a> {
     GivenNucleotides(&'a str),
     /// The characters in the byte slice represent, or will represent, RNA.
@@ -79,8 +83,7 @@ impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        // @TODO all other: Change RNA -> Rna
-        write!(f, "Rna {{{}}}", self.as_str())
+        write!(f, "RNA {{{}}}", self.as_str())
     }
 }
 
@@ -98,19 +101,32 @@ impl<'l, 'r> PartialEq<Rna<'r>> for &Rna<'l> {
 #[cfg(test)]
 pub mod test {
     extern crate alloc;
-    use super::{Dna, Rna};
+    use super::{Dna, OurResult, Rna};
     use alloc::format;
 
     #[test]
-    fn test_rna_given_nucleotides_debug() {
-        Dna::new("GCTA").map(|dna| {
-            // Many use cases need an extra variable!
-            let mut storage = [0u8; 4];
+    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
+        let rna = super::Rna::new("CGAU")?;
+        let rna_dbg = format!("{:?}", rna);
+        assert_eq!("RNA {CGAU}", rna_dbg);
+        Ok(())
+    }
 
-            let rna = dna.into_rna(&mut storage);
-            let rna_dbg = format!("{:?}", rna);
-            assert_eq!("Rna {CGAU}", rna_dbg.as_str());
-        });
+    #[test]
+    fn test_rna_from_dna_debug() -> OurResult<()> {
+        let dna = super::Dna::new("GCTA")?;
+
+        // Single-statement use of into_rna() accepts the storage array as a temporary value:
+        let rna_dbg = format!("{:?}", dna.into_rna(&mut [0u8; 4]));
+        assert_eq!("RNA {CGAU}", rna_dbg);
+
+        // But many use cases need an extra variable!
+        let mut storage = [0u8; 4];
+        let rna = dna.into_rna(&mut storage);
+        // rna is used later (in a separate statement), hence storage has to be a separate variable:
+        let rna_dbg = format!("{:?}", rna);
+        assert_eq!("RNA {CGAU}", rna_dbg);
+        Ok(())
     }
 
     #[test]
