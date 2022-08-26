@@ -4,7 +4,7 @@ extern crate alloc;
 
 use alloc::boxed::Box;
 use core::fmt::{self, Debug, Formatter};
-use utils::OurResult;
+use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 /// DNA (DNA nucleotide sequence).
 ///
@@ -27,7 +27,7 @@ impl<'a> Dna<'a> {
     /// Create a new instance with given DNA nucleotides. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(dna: &'a str) -> OurResult<Self> {
-        utils::check_dna(dna)?;
+        checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -44,7 +44,7 @@ impl<'a> Rna<'a> {
     /// Create a new instance with given RNA nucleotides. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(rna: &'a str) -> OurResult<Self> {
-        utils::check_rna_str(rna)?;
+        checks::check_rna_str(rna)?;
         Ok(Self::GivenNucleotides(rna))
     }
 

@@ -2,7 +2,7 @@
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
-use utils::OurResult;
+use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Dna<'a>(&'a str);
@@ -26,7 +26,7 @@ pub enum Rna<'a> {
 
 impl<'a> Dna<'a> {
     pub fn new(dna: &'a str) -> OurResult<Self> {
-        utils::check_dna(dna)?;
+        checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -40,7 +40,7 @@ impl<'a> Dna<'a> {
 
 impl<'a> Rna<'a> {
     pub fn new(rna: &'a str) -> OurResult<Self> {
-        utils::check_rna_str(rna)?;
+        checks::check_rna_str(rna)?;
         Ok(Self::GivenNucleotides(rna))
     }
 
@@ -59,7 +59,7 @@ impl<'a> Rna<'a> {
         }
         let result = Self::MutableNucleotides { rna: storage, len };
         // This would not work for Unicode in general.
-        utils::check_rna_str(result.as_str())?;
+        checks::check_rna_str(result.as_str())?;
         Ok(result)
     }
 

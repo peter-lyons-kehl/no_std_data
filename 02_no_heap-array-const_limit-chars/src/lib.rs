@@ -2,7 +2,7 @@
 #![no_std]
 
 use core::fmt::{self, Debug, Formatter};
-use utils::OurResult;
+use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
 
@@ -46,7 +46,7 @@ pub struct Rna {
 
 impl<'a> Dna<'a> {
     pub fn new(dna: &'a str) -> OurResult<Self> {
-        utils::check_dna(dna)?;
+        checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -70,7 +70,7 @@ impl Rna {
             result.rna[result.len] = c;
             result.len += 1;
         }
-        utils::check_rna_chars(result.chars())?;
+        checks::check_rna_chars(result.chars())?;
         Ok(result)
     }
 

@@ -8,7 +8,7 @@ const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
-use utils::OurResult;
+use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 #[derive(Default)]
 pub struct Rna {
@@ -19,7 +19,7 @@ pub struct Rna {
 
 impl<'a> Dna<'a> {
     pub fn new(dna: &'a str) -> OurResult<Self> {
-        utils::check_dna(dna)?;
+        checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -43,7 +43,7 @@ impl Rna {
             result.len += 1;
         }
         // This would not work for Unicode in general.
-        utils::check_rna_str(result.as_str())?;
+        checks::check_rna_str(result.as_str())?;
         Ok(result)
     }
 

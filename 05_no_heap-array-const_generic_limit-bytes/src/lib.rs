@@ -6,7 +6,7 @@
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
-use utils::OurResult;
+use utils::{checks, OurResult};
 
 const DEFAULT_MAX_NUCLEOTIDES: usize = 12;
 
@@ -45,7 +45,7 @@ impl<'a, const M: usize> DnaImpl<'a, M> {
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(dna: &'a str) -> OurResult<Self> {
-        utils::check_dna(dna)?;
+        checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -77,7 +77,7 @@ impl<const M: usize> RnaImpl<M> {
         }
         let result = Self { rna, len };
         // Only check the valid items: `0..len`. Hence `Iterator::take`.
-        utils::check_rna_str(result.as_str())?;
+        checks::check_rna_str(result.as_str())?;
         Ok(result)
     }
 

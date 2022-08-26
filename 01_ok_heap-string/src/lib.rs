@@ -4,7 +4,7 @@ extern crate alloc;
 
 use alloc::{borrow::ToOwned, string::String};
 use core::fmt::Debug;
-use utils::OurResult;
+use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 /// DNA (DNA nucleotide sequence).  
 ///
@@ -28,18 +28,18 @@ pub struct Dna(String);
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Rna(String);
 
-impl Dna {
+impl DnaTrait<Rna> for Dna {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &str) -> OurResult<Self> {
-        utils::check_dna(dna)?;
+    fn new(dna: &str) -> OurResult<Self> {
+        checks::check_dna(dna)?;
         Ok(Self(dna.to_owned()))
     }
 
     /// Create an [`Rna`] instance based on `self`. Transcript all nucleotides to RNA (and store
     /// them in the result [`Rna`] instance).
-    pub fn into_rna(&self) -> Rna {
+    fn into_rna(&self) -> Rna {
         match self {
             Dna(dna) => {
                 let rna_chars = dna.chars().map(utils::dna_to_rna).collect();
@@ -49,12 +49,12 @@ impl Dna {
     }
 }
 
-impl Rna {
+impl RnaTrait for Rna {
     /// Create a new [`Rna`] instance with given RNA nucleotides. If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &str) -> OurResult<Self> {
-        utils::check_rna_str(rna)?;
+    fn new(rna: &str) -> OurResult<Self> {
+        checks::check_rna_str(rna)?;
         Ok(Self(rna.to_owned()))
     }
 }

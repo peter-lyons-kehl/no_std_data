@@ -1,7 +1,7 @@
 //! no_std heapless (bare metal/embedded-friendly)
 #![no_std]
 
-use utils::OurResult;
+use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 /// Fixed length.
 ///
@@ -38,7 +38,7 @@ impl<'a, const N: usize> Dna<'a, N> {
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(dna: &'a str) -> OurResult<Self> {
-        utils::check_dna(dna)?;
+        checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -64,7 +64,7 @@ impl<const N: usize> Rna<N> {
             rna_iter.next().is_none(),
             "Not enough space, or too long RNA source."
         );
-        utils::check_rna_char_iter(result.0.iter().map(|&b| b as char))?;
+        checks::check_rna_char_iter(result.0.iter().map(|&b| b as char))?;
         Ok(result)
     }
 }

@@ -3,7 +3,7 @@
 
 use core::fmt::{self, Debug, Formatter};
 use core::str::Chars;
-use utils::OurResult;
+use utils::{checks, OurResult};
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
@@ -23,7 +23,7 @@ impl<'a> Dna<'a> {
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(dna: &'a str) -> OurResult<Self> {
-        utils::check_dna(dna)?;
+        checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -50,7 +50,7 @@ impl<'a> Rna<'a> {
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
     pub fn new(rna: &'a str) -> OurResult<Self> {
-        utils::check_rna_str(rna)?;
+        checks::check_rna_str(rna)?;
         Ok(Self::GivenNucleotides(rna))
     }
 

@@ -2,7 +2,7 @@
 #![no_std]
 
 use core::fmt::{self, Debug, Formatter};
-use utils::OurResult;
+use utils::{checks, OurResult};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
@@ -16,7 +16,7 @@ pub enum Rna<'a> {
 impl<'a> Dna<'a> {
     /** On error return Err with a 0-based index of the first incorrect character. */
     pub fn new(dna: &'a str) -> OurResult<Self> {
-        utils::check_dna(dna)?;
+        checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
@@ -29,7 +29,7 @@ impl<'a> Dna<'a> {
 
 impl<'a> Rna<'a> {
     pub fn new(rna: &'a str) -> OurResult<Self> {
-        utils::check_rna_str(rna)?;
+        checks::check_rna_str(rna)?;
         Ok(Self::GivenNucleotides(rna))
     }
 }
