@@ -1,4 +1,3 @@
-#![allow(unused)]
 //! no_std heapless (bare metal/embedded-friendly) implementation
 #![no_std]
 

@@ -1,4 +1,3 @@
-#![allow(unused)]
 //! no_std heapless (bare metal/embedded-friendly) implementation
 #![no_std]
 
@@ -48,13 +47,6 @@ impl<'a> Rna<'a> {
 
 impl<'a> PartialEq for Rna<'a> {
     fn eq(&self, other: &Self) -> bool {
-        fn inner(
-            iter_one: &mut dyn Iterator<Item = char>,
-            iter_two: &mut dyn Iterator<Item = char>,
-        ) -> bool {
-            iter_one.eq(iter_two)
-        }
-
         self.with_chars_universal(
             other,
             |self_chars: &mut dyn Iterator<Item = char>, other: &Self| {
