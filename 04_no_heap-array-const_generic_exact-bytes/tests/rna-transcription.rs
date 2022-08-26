@@ -1,4 +1,7 @@
+//! Can't use the generic tests from ['utils::api_tests_read_only`], because this implementation
+//! makes `Rna` compatible only for the same const generic parameter `N`.
 use no_heap_array_const_generic_exact_bytes as dna;
+use utils::{DnaTrait, RnaTrait};
 
 #[test]
 fn test_valid_dna_input() {

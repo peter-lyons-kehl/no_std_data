@@ -6,7 +6,7 @@
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
-use utils::{checks, OurResult};
+use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 const DEFAULT_MAX_NUCLEOTIDES: usize = 12;
 
@@ -40,11 +40,11 @@ pub struct RnaImpl<const M: usize = DEFAULT_MAX_NUCLEOTIDES> {
 
 pub type Rna = RnaImpl<DEFAULT_MAX_NUCLEOTIDES>;
 
-impl<'a, const M: usize> DnaImpl<'a, M> {
+impl<'a, const M: usize> DnaTrait<'a, RnaImpl<M>> for DnaImpl<'a, M> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> OurResult<Self> {
+    fn new(dna: &'a str) -> OurResult<Self> {
         checks::check_dna(dna)?;
         Ok(Self(dna))
     }
@@ -52,15 +52,18 @@ impl<'a, const M: usize> DnaImpl<'a, M> {
     /// Create an [`Rna`] instance, based on `self`. The returned instance contains the translated
     /// nucleotides. (The result doesn't depend on the original [`Dna`] instance's lifetime). TODO
     /// add similar doc to `ok_heap_string`.
-    pub fn into_rna(&self) -> RnaImpl<M> {
+    fn into_rna(&self) -> RnaImpl<M> {
         RnaImpl::new_from_iter(self.0.chars().map(utils::dna_to_rna)).expect("RNA sequence")
     }
 }
 
-impl<const M: usize> RnaImpl<M> {
-    pub fn new(rna: &str) -> OurResult<Self> {
+impl<'a, const M: usize> RnaTrait<'a> for RnaImpl<M> {
+    fn new(rna: &'a str) -> OurResult<Self> {
         Self::new_from_iter(rna.chars())
     }
+}
+
+impl<const M: usize> RnaImpl<M> {
     pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
         let mut len = 0usize;
         let rna = core::array::from_fn(|_| {
@@ -114,7 +117,7 @@ impl<const L: usize, const R: usize> PartialEq<RnaImpl<R>> for RnaImpl<L> {
     }
 }
 /// Not necessary, but valid.
-impl Eq for RnaImpl {}
+impl<const M: usize> Eq for RnaImpl<M> {}
 
 impl<const M: usize> Debug for RnaImpl<M> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
@@ -129,8 +132,8 @@ pub mod test {
     // Unit tests of a `no_std` crate can't use `std` either. However, they can use heap (even if
     // the crate being tested doesn't have access to heap).
     extern crate alloc;
-    use super::OurResult;
     use alloc::format;
+    use utils::{DnaTrait, OurResult, RnaTrait};
 
     #[test]
     fn test_rna_given_nucleotides_debug() -> OurResult<()> {

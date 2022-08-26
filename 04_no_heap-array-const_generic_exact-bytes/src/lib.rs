@@ -33,11 +33,11 @@ pub struct Dna<'a, const N: usize>(&'a str);
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Rna<const N: usize>([u8; N]);
 
-impl<'a, const N: usize> Dna<'a, N> {
+impl<'a, const N: usize> DnaTrait<'a, Rna<N>> for Dna<'a, N> {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> OurResult<Self> {
+    fn new(dna: &'a str) -> OurResult<Self> {
         checks::check_dna(dna)?;
         Ok(Self(dna))
     }
@@ -45,15 +45,18 @@ impl<'a, const N: usize> Dna<'a, N> {
     /// Create an [`Rna`] instance, based on `self`. The returned instance contains the translated
     /// nucleotides. (The result doesn't depend on the original [`Dna`] instance's lifetime). TODO
     /// add similar doc to `ok_heap_string`.
-    pub fn into_rna(&self) -> Rna<N> {
+    fn into_rna(&self) -> Rna<N> {
         Rna::new_from_iter(self.0.chars().map(utils::dna_to_rna)).expect("RNA sequence")
     }
 }
 
-impl<const N: usize> Rna<N> {
-    pub fn new(rna: &str) -> OurResult<Self> {
+impl<'a, const N: usize> RnaTrait<'a> for Rna<N> {
+    fn new(rna: &str) -> OurResult<Self> {
         Self::new_from_iter(rna.chars())
     }
+}
+
+impl<const N: usize> Rna<N> {
     fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
         //let mut result = Self(core::array::from_fn(|_| Default::default()));
         // Can't `result.0.copy_from_slice(rna)` - because `result.0` is `&[char]`.

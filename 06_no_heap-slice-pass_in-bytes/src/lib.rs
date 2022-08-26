@@ -1,8 +1,10 @@
+//! This crate doesn't implement utils::{DnaTrait, RnaTrait}, because the function signature of
+//! [`Dna::into_rna`] here is different - it needs an extra parameter (storage slice).
 #![no_std]
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
-use utils::{checks, DnaTrait, OurResult, RnaTrait};
+use utils::{checks, OurResult};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Dna<'a>(&'a str);

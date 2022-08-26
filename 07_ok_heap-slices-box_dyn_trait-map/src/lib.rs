@@ -23,31 +23,31 @@ pub enum Rna<'a> {
     DnaBased(&'a str),
 }
 
-impl<'a> Dna<'a> {
-    /// Create a new instance with given DNA nucleotides. On error return [`Err`] with a 0-based
-    /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> OurResult<Self> {
+impl<'a> DnaTrait<'a, Rna<'a>> for Dna<'a> {
+    fn new(dna: &'a str) -> OurResult<Self> {
         checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
     /// Create a [DNA-based variant of `Rna`](Rna::GivenNucleotides) instance, based on `self`. No
     /// transformation/iteration is done yet - see [`Rna::DnaBased`].
-    pub fn into_rna(&self) -> Rna<'a> {
+    fn into_rna(&self) -> Rna<'a> {
         match self {
             Dna(dna) => Rna::DnaBased(dna),
         }
     }
 }
 
-impl<'a> Rna<'a> {
+impl<'a> RnaTrait<'a> for Rna<'a> {
     /// Create a new instance with given RNA nucleotides. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &'a str) -> OurResult<Self> {
+    fn new(rna: &'a str) -> OurResult<Self> {
         checks::check_rna_str(rna)?;
         Ok(Self::GivenNucleotides(rna))
     }
+}
 
+impl<'a> Rna<'a> {
     /// Create an [`Iterator`] over `self`'s RNA nucleotides (chars). For  
     /// [RNA-based variant](Rna::GivenNucleotides) this iterates over the given nucleotides. For  
     /// [DNA-based variant](Rna::DnaBased) this translates the DNA nucleotides to RNA ones on the
@@ -68,7 +68,6 @@ impl<'a> PartialEq for Rna<'a> {
         self.iter().eq(other.iter())
     }
 }
-/// Not necessary, but valid.
 impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {
@@ -83,7 +82,7 @@ impl<'a> Debug for Rna<'a> {
 pub mod test {
     extern crate alloc;
     use alloc::format;
-    use utils::OurResult;
+    use utils::{DnaTrait, OurResult, RnaTrait};
 
     #[test]
     fn test_rna_given_nucleotides_debug() -> OurResult<()> {

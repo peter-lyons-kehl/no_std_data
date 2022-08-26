@@ -2,7 +2,7 @@
 #![no_std]
 
 use core::fmt::{self, Debug, Formatter};
-use utils::{checks, OurResult};
+use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 /// DNA (DNA nucleotide sequence).
 ///
@@ -16,34 +16,31 @@ pub enum Rna<'a> {
     DnaBased(&'a str),
 }
 
-impl<'a> Dna<'a> {
-    /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
-    /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
-    /// index of the first incorrect character.
-    pub fn new(dna: &'a str) -> OurResult<Self> {
+impl<'a> DnaTrait<'a, Rna<'a>> for Dna<'a> {
+    fn new(dna: &'a str) -> OurResult<Self> {
         checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
-    /// Create a [DNA-based variant of `Rna`](Rna::GivenNucleotides) instance, based on `self`. No
-    /// transformation/iteration is done yet - see [`Rna::DnaBased`].
-    pub fn into_rna(&self) -> Rna<'a> {
+    fn into_rna(&self) -> Rna<'a> {
         match self {
             Dna(dna) => Rna::DnaBased(dna),
         }
     }
 }
 
-impl<'a> Rna<'a> {
+impl<'a> RnaTrait<'a> for Rna<'a> {
     /// Create a new [`Rna`] instance with given RNA nucleotides -[`Rna::GivenNucleotides`] variant.
     /// If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new(rna: &'a str) -> OurResult<Self> {
+    fn new(rna: &'a str) -> OurResult<Self> {
         checks::check_rna_str(rna)?;
         Ok(Self::GivenNucleotides(rna))
     }
+}
 
+impl<'a> Rna<'a> {
     /// Get an [`Iterator`] over `self`'s RNA nucleotides (chars), and call `closure` with that
     /// (`self`'s) iterator and `other_rna_chars`. For  
     /// [RNA-based variant](Rna::GivenNucleotides) this iterates over the given nucleotides. For  
@@ -100,8 +97,8 @@ impl<'a> Debug for Rna<'a> {
 #[cfg(test)]
 pub mod test {
     extern crate alloc;
-    use super::OurResult;
     use alloc::format;
+    use utils::{DnaTrait, OurResult, RnaTrait};
 
     #[test]
     fn test_rna_given_nucleotides_debug() -> OurResult<()> {

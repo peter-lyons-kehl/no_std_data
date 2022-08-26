@@ -28,11 +28,11 @@ pub struct Dna(String);
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Rna(String);
 
-impl DnaTrait<Rna> for Dna {
+impl<'a> DnaTrait<'a, Rna> for Dna {
     /// Create a new [`Dna`] instance with given DNA nucleotides. If `dna` is valid, return  
     /// [`Some(Dna)`](Some<Dna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    fn new(dna: &str) -> OurResult<Self> {
+    fn new(dna: &'a str) -> OurResult<Self> {
         checks::check_dna(dna)?;
         Ok(Self(dna.to_owned()))
     }
@@ -49,11 +49,11 @@ impl DnaTrait<Rna> for Dna {
     }
 }
 
-impl RnaTrait for Rna {
+impl<'a> RnaTrait<'a> for Rna {
     /// Create a new [`Rna`] instance with given RNA nucleotides. If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    fn new(rna: &str) -> OurResult<Self> {
+    fn new(rna: &'a str) -> OurResult<Self> {
         checks::check_rna_str(rna)?;
         Ok(Self(rna.to_owned()))
     }

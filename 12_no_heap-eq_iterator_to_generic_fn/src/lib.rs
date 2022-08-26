@@ -4,7 +4,7 @@
 use core::fmt::{self, Debug, Formatter};
 use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
 
 #[derive(Clone, Copy)]
@@ -16,27 +16,27 @@ pub enum Rna<'a> {
     DnaBased(&'a str),
 }
 
-impl<'a> Dna<'a> {
-    /** On error return Err with a 0-based index of the first incorrect character. */
-    pub fn new(dna: &'a str) -> OurResult<Self> {
+impl<'a> DnaTrait<'a, Rna<'a>> for Dna<'a> {
+    fn new(dna: &'a str) -> OurResult<Self> {
         checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
-    pub fn into_rna(&self) -> Rna<'a> {
+    fn into_rna(&self) -> Rna<'a> {
         match self {
             Dna(dna) => Rna::DnaBased(dna),
         }
     }
 }
 
-impl<'a> Rna<'a> {
-    /** On error return Err with a 0-based index of the first incorrect character. */
-    pub fn new(rna: &'a str) -> OurResult<Self> {
+impl<'a> RnaTrait<'a> for Rna<'a> {
+    fn new(rna: &'a str) -> OurResult<Self> {
         checks::check_rna_str(rna)?;
         Ok(Self::GivenNucleotides(rna))
     }
+}
 
+impl<'a> Rna<'a> {
     fn eq_iterate_other<I>(&self, other_rna_chars: I) -> bool
     where
         I: Iterator<Item = char>,
@@ -56,6 +56,7 @@ impl<'a> PartialEq for Rna<'a> {
         }
     }
 }
+impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
@@ -79,8 +80,8 @@ impl<'a> Debug for Rna<'a> {
 #[cfg(test)]
 pub mod test {
     extern crate alloc;
-    use super::OurResult;
     use alloc::format;
+    use utils::{DnaTrait, OurResult, RnaTrait};
 
     #[test]
     fn test_rna_given_nucleotides_debug() -> OurResult<()> {

@@ -3,7 +3,7 @@
 use core::fmt::{self, Debug, Formatter};
 use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
 
 #[derive(Clone, Copy)]
@@ -12,23 +12,23 @@ pub enum Rna<'a> {
     DnaBased(&'a str),
 }
 
-impl<'a> Dna<'a> {
+impl<'a> DnaTrait<'a, Rna<'a>> for Dna<'a> {
     /** On error return Err with a 0-based index of the first incorrect character. */
-    pub fn new(dna: &'a str) -> OurResult<Self> {
+    fn new(dna: &'a str) -> OurResult<Self> {
         checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
-    pub fn into_rna(&self) -> Rna<'a> {
+    fn into_rna(&self) -> Rna<'a> {
         match self {
             Dna(dna) => Rna::DnaBased(dna),
         }
     }
 }
 
-impl<'a> Rna<'a> {
+impl<'a> RnaTrait<'a> for Rna<'a> {
     /** On error return Err with a 0-based index of the first incorrect character. */
-    pub fn new(rna: &'a str) -> OurResult<Self> {
+    fn new(rna: &'a str) -> OurResult<Self> {
         checks::check_rna_str(rna)?;
         Ok(Self::GivenNucleotides(rna))
     }
@@ -58,6 +58,7 @@ impl<'a> PartialEq for Rna<'a> {
         }
     }
 }
+impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
@@ -86,8 +87,8 @@ pub mod test {
 
     // Emb. Presentation: However, your unit tests can use full `std`:
     extern crate alloc;
-    use super::OurResult;
     use alloc::format;
+    use utils::{DnaTrait, OurResult, RnaTrait};
 
     #[test]
     fn test_rna_given_nucleotides_debug() -> OurResult<()> {

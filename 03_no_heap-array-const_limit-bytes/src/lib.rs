@@ -17,25 +17,27 @@ pub struct Rna {
     len: usize,
 }
 
-impl<'a> Dna<'a> {
-    pub fn new(dna: &'a str) -> OurResult<Self> {
+impl<'a> DnaTrait<'a, Rna> for Dna<'a> {
+    fn new(dna: &'a str) -> OurResult<Self> {
         checks::check_dna(dna)?;
         Ok(Self(dna))
     }
 
-    pub fn into_rna(&self) -> Rna {
+    fn into_rna(&self) -> Rna {
         Rna::new_from_iter(self.0.chars().map(utils::dna_to_rna)).expect("RNA")
     }
 }
 
-impl Rna {
+impl<'a> RnaTrait<'a> for Rna {
     /// Create a new [`Rna`] instance with given RNA nucleotides. If `rna` is valid, return  
     /// [`Some(Rna)`](Some<Rna>) containing the new instance. On error return [`Err`] with a 0-based
     /// index of the first incorrect character.
-    pub fn new<'a>(rna: &'a str) -> OurResult<Self> {
+    fn new(rna: &'a str) -> OurResult<Self> {
         Self::new_from_iter(rna.chars())
     }
+}
 
+impl Rna {
     fn new_from_iter(rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
         let mut result = Rna::default();
         for c in rna_iter {
@@ -78,8 +80,8 @@ impl Clone for Rna {
 #[cfg(test)]
 pub mod test {
     extern crate alloc;
-    use super::OurResult;
     use alloc::format;
+    use utils::{DnaTrait, OurResult, RnaTrait};
 
     #[test]
     fn test_rna_given_nucleotides_debug() -> OurResult<()> {

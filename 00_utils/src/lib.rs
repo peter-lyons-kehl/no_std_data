@@ -1,9 +1,11 @@
 //! no_std heapless (bare metal/embedded-friendly) shared functionality
 #![no_std]
+// Needed for api_tests::Tests
+#![feature(generic_associated_types)]
 
 use core::fmt::Debug;
 
-pub mod api_tests;
+pub mod api_tests_read_only;
 pub mod checks;
 
 /// Custom result type. It works with our Exercism exercise (the error variant uses `usize` to
@@ -13,18 +15,16 @@ pub mod checks;
 // New to Rust? Question mark operator shortcuts on error and returns it here.
 pub type OurResult<T> = Result<T, usize>;
 
-pub trait DnaTrait<Rna>: Sized + PartialEq + Eq + Debug
+pub trait DnaTrait<'a, Rna>: Sized + PartialEq + Eq + Debug
 where
-    Rna: RnaTrait,
+    Rna: RnaTrait<'a> + 'a,
 {
-    //type Rna: RnaTrait;
-
-    fn new(dna: &str) -> OurResult<Self>;
+    fn new(dna: &'a str) -> OurResult<Self>;
     fn into_rna(&self) -> Rna;
 }
 
-pub trait RnaTrait: Sized + PartialEq + Eq + Debug {
-    fn new(rna: &str) -> OurResult<Self>;
+pub trait RnaTrait<'a>: Sized + PartialEq + Eq + Debug {
+    fn new(rna: &'a str) -> OurResult<Self>;
 }
 
 /// Translate DNA nucleotide `dna_nucl` to a RNA nucleaotide. [`panic`] if `dna_nucl` is invalid.
