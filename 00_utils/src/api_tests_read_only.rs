@@ -1,5 +1,7 @@
 use super::{DnaTrait, RnaTrait};
 
+/// test_* functions are a verbatim copy from original Exercism's tests from
+/// https://github.com/exercism/rust/blob/main/exercises/practice/rna-transcription/tests/rna-transcription.rs
 pub trait Tests {
     type Dna<'a>: DnaTrait<'a, Self::Rna<'a>>;
     type Rna<'a>: RnaTrait<'a> + 'a;
