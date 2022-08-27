@@ -1,5 +1,10 @@
-//use core::fmt::Debug;
+extern crate alloc;
+
 use crate::{DnaTrait, OurResult, RnaTrait};
+use alloc::vec::Vec;
+
+pub mod wipe_on_leave;
+pub mod wipe_on_mut;
 
 pub trait RnaTraitMut<'a>: RnaTrait<'a> {
     /// Mutate `self`: Make it store all characters in the given `iter`. Fail if `iter` doesn't
@@ -7,21 +12,39 @@ pub trait RnaTraitMut<'a>: RnaTrait<'a> {
     fn set_from_iter(&mut self, iter: &mut dyn Iterator<Item = char>) -> OurResult<()>;
 }
 
-pub trait RnaTraitMutLeakStorage<'a>: RnaTraitMut<'a> {
-    /// Invoke the given call-back function `f` with an iterator over `self`'s whole storage
-    /// (including any unused data; mapped to chars if needed).
-    ///
-    /// This uses an [`Iterator`] of `char`, even if the backing storage is in bytes. That allows
-    /// us to re-use the tests. (Yes, that does increase a potential of a bug in the crate being
-    /// tested or in the test harness.)
-    ///
-    /// An ideal signature for this function would be: `fn leak_whole_storage() -> impl
-    /// Iterator<Item = char>` but that's not possible for trait functions. Hence working around
-    /// with a double dynamic dispatch.
-    ///
-    /// Available & used only when testing.
-    #[cfg(test)]
-    fn with_whole_storage_leaked<R>(&self, f: &dyn Fn(&mut dyn Iterator<Item = char>) -> R) -> R;
+/// A marker trait. See [`Tests`] and [`Leave`].
+pub trait RnaTraitMutLeakStorage<'a>: RnaTraitMut<'a> {}
+
+/// Type (signature) of a call back function that [`Tests`] trait passes to the user-provided
+/// function that has signature [`WithStorageLeaked`]. [`Tests`] does that in  its `test_`
+/// functions.
+#[allow(type_alias_bounds)]
+pub type WithStorageLeakedCallBack<'a, RES: 'a> = &'a dyn Fn(&mut dyn Iterator<Item = u8>) -> RES;
+
+/// Type (signature) of user's implementation's call back function that is passed by the user to
+/// `test_` functions from [`Tests`] trait, so that `test_` functions here can detect leakage.
+///
+/// This exposes `self`'s whole storage (including any unused data; mapped to bytes if needed).
+#[allow(type_alias_bounds)]
+pub type WithStorageLeaked<'a, RNA: RnaTraitMutLeakStorage<'a>, RES> =
+    &'a dyn Fn(&RNA, WithStorageLeakedCallBack<'a, RES>) -> RES;
+
+/// A helper.
+fn cga_modified_to_u<'a, R: RnaTraitMut<'a>>() -> R {
+    let mut rna = R::new("CGA").expect("RNA");
+    rna.set_from_iter(&mut "U".chars()).expect("success");
+    rna
+}
+
+/// A helper.
+fn leaks_g_or_a<'a, R: RnaTraitMutLeakStorage<'a>>(
+    rna: &R,
+    with_storage_leaked: WithStorageLeaked<'a, R, bool>,
+) -> bool {
+    with_storage_leaked(&rna, &|bytes_iter| {
+        let bytes = bytes_iter.collect::<Vec<_>>();
+        bytes[1] == 'G' as u8 || bytes[2] == 'A' as u8
+    })
 }
 
 pub trait Tests {

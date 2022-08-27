@@ -3,7 +3,8 @@
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
-use utils::api_tests_mut::RnaTraitMut;
+use utils::api_tests_mut::wipe_on_leave::RnaTraitMutWipeOnLeave;
+use utils::api_tests_mut::{RnaTraitMut, RnaTraitMutLeakStorage};
 use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
@@ -72,6 +73,9 @@ impl<'a> RnaTraitMut<'a> for Rna {
         self.set_from_iter_impl(iter.map(core::convert::identity))
     }
 }
+
+impl<'a> RnaTraitMutLeakStorage<'a> for Rna {}
+impl<'a> RnaTraitMutWipeOnLeave<'a> for Rna {}
 
 impl PartialEq for Rna {
     fn eq(&self, other: &Self) -> bool {

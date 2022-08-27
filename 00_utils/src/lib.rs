@@ -2,12 +2,11 @@
 #![no_std]
 // Needed for api_tests::Tests
 #![feature(generic_associated_types)]
+#![feature(associated_type_defaults)]
 
 use core::fmt::Debug;
 
 pub mod api_tests_mut;
-pub mod api_tests_mut_wipe_on_leave;
-pub mod api_tests_mut_wipe_on_mut;
 pub mod api_tests_read_only;
 pub mod checks;
 
