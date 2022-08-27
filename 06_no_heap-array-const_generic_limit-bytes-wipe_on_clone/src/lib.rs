@@ -121,34 +121,6 @@ impl<const M: usize> Eq for RnaImpl<M> {}
 
 impl<const M: usize> Debug for RnaImpl<M> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "RNA({})", self.as_str())
-    }
-}
-
-#[cfg(test)]
-pub mod test {
-    //! Test(s) on top of Exercism's tests (which are in `../tests/`).
-
-    // Unit tests of a `no_std` crate can't use `std` either. However, they can use heap (even if
-    // the crate being tested doesn't have access to heap).
-    extern crate alloc;
-    use alloc::format;
-    use utils::{DnaTrait, OurResult, RnaTrait};
-
-    #[test]
-    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
-        let rna = super::Rna::new("CGAU")?;
-        let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA {CGAU}", rna_dbg.as_str());
-        Ok(())
-    }
-
-    #[test]
-    fn test_rna_from_dna_debug() -> OurResult<()> {
-        let dna = <super::DnaImpl<20>>::new("GCTA")?;
-        let rna = dna.into_rna();
-        let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA {CGAU}", rna_dbg.as_str());
-        Ok(())
+        write!(f, "Rna(\"{}\")", self.as_str())
     }
 }

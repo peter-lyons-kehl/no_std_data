@@ -98,14 +98,14 @@ impl Debug for Rna {
         {
             extern crate alloc;
             use alloc::string::String;
-            write!(f, "RNA({:?})", self.chars().iter().collect::<String>())
+            write!(f, "RNA({})", self.chars().iter().collect::<String>())
         }
         // But to make this heapless-compatible, we iterate over characters instead:
         #[cfg(not(feature = "with_heap"))]
         {
-            write!(f, "RNA(")?;
+            write!(f, "Rna(\"")?;
             self.chars().iter().try_for_each(|&c| write!(f, "{}", c))?;
-            write!(f, ")")
+            write!(f, "\")")
         }
     }
 }
@@ -117,35 +117,5 @@ impl Clone for Rna {
             rna[i] = self.rna[i];
         }
         Self { rna, len: self.len }
-    }
-}
-
-#[cfg(test)]
-pub mod test {
-    //! Test(s) on top of Exercism's tests (which are in `../tests/`).
-
-    // Unit tests of a `no_std` crate can't use `std` either. However, they can use heap (even if
-    // the crate being tested doesn't have access to heap).
-    extern crate alloc;
-    use alloc::format;
-    use utils::{DnaTrait, OurResult, RnaTrait};
-
-    /// New to Rust? An empty pair of parenthesis `()` here is an empty/no value type, called a
-    /// "unit type". Here it indicates content of [`Result::Ok`] returned on success.
-    #[test]
-    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
-        let rna = super::Rna::new("CGAU")?;
-        let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA {CGAU}", rna_dbg);
-        Ok(())
-    }
-
-    #[test]
-    fn test_rna_from_dna_debug() -> OurResult<()> {
-        let dna = super::Dna::new("GCTA")?;
-        let rna = dna.into_rna();
-        let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA {CGAU}", rna_dbg);
-        Ok(())
     }
 }

@@ -63,7 +63,7 @@ impl Eq for Rna {}
 
 impl Debug for Rna {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "RNA({})", self.as_str())
+        write!(f, "Rna(\"{}\")", self.as_str())
     }
 }
 
@@ -74,29 +74,5 @@ impl Clone for Rna {
             rna[i] = self.rna[i];
         }
         Self { rna, len: self.len }
-    }
-}
-
-#[cfg(test)]
-pub mod test {
-    extern crate alloc;
-    use alloc::format;
-    use utils::{DnaTrait, OurResult, RnaTrait};
-
-    #[test]
-    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
-        let rna = super::Rna::new("CGAU")?;
-        let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA {CGAU}", rna_dbg);
-        Ok(())
-    }
-
-    #[test]
-    fn test_rna_from_dna_debug() -> OurResult<()> {
-        let dna = super::Dna::new("GCTA")?;
-        let rna = dna.into_rna();
-        let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA {CGAU}", rna_dbg);
-        Ok(())
     }
 }

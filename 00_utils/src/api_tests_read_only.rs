@@ -88,12 +88,14 @@ pub trait Tests {
     }
     // ------ End test functions from Exercism
 
+    // ------- Tests on top of Exercism's tests:
+
     /// Honoring default derived format of a newtype-based implementation. Any other implementations
     /// to conform.
     fn test_rna_given_nucleotides_debug() -> OurResult<()> {
         let rna = Self::Rna::new("CGAU")?;
         let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA(CGAU)", rna_dbg);
+        assert_eq!("Rna(\"CGAU\")", rna_dbg);
         Ok(())
     }
 
@@ -102,7 +104,7 @@ pub trait Tests {
         let dna = Self::Dna::new("GCTA")?;
         let rna = dna.into_rna();
         let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA(CGAU)", rna_dbg);
+        assert_eq!("Rna(\"CGAU\")", rna_dbg);
         Ok(())
     }
 

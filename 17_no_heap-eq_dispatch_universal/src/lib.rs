@@ -64,7 +64,7 @@ impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "RNA(")?;
+        write!(f, "Rna(\"")?;
         match self {
             Rna::GivenNucleotides(rna) => {
                 write!(f, "{rna}")?;
@@ -77,30 +77,6 @@ impl<'a> Debug for Rna<'a> {
                     .try_for_each(|c| write!(f, "{c}"))?;
             }
         }
-        write!(f, ")")
-    }
-}
-
-#[cfg(test)]
-pub mod test {
-    extern crate alloc;
-    use alloc::format;
-    use utils::{DnaTrait, OurResult, RnaTrait};
-
-    #[test]
-    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
-        let rna = super::Rna::new("CGAU")?;
-        let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA {CGAU}", rna_dbg);
-        Ok(())
-    }
-
-    #[test]
-    fn test_rna_from_dna_debug() -> OurResult<()> {
-        let dna = super::Dna::new("GCTA")?;
-        let rna = dna.into_rna();
-        let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA {CGAU}", rna_dbg);
-        Ok(())
+        write!(f, "\")")
     }
 }

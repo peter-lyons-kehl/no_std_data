@@ -85,7 +85,7 @@ impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "RNA({})", self.as_str())
+        write!(f, "Rna(\"{}\")", self.as_str())
     }
 }
 
@@ -103,34 +103,10 @@ impl<'l, 'r> PartialEq<Rna<'r>> for &Rna<'l> {
 #[cfg(test)]
 pub mod test {
     extern crate alloc;
-    use super::{Dna, OurResult, Rna};
-    use alloc::format;
+    use super::{Dna, Rna};
 
-    #[test]
-    fn test_rna_given_nucleotides_debug() -> OurResult<()> {
-        let rna = super::Rna::new("CGAU")?;
-        let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA {CGAU}", rna_dbg);
-        Ok(())
-    }
-
-    #[test]
-    fn test_rna_from_dna_debug() -> OurResult<()> {
-        let dna = super::Dna::new("GCTA")?;
-
-        // Single-statement use of into_rna() accepts the storage array as a temporary value:
-        let rna_dbg = format!("{:?}", dna.into_rna(&mut [0u8; 4]));
-        assert_eq!("RNA {CGAU}", rna_dbg);
-
-        // But many use cases need an extra variable!
-        let mut storage = [0u8; 4];
-        let rna = dna.into_rna(&mut storage);
-        // rna is used later (in a separate statement), hence storage has to be a separate variable:
-        let rna_dbg = format!("{:?}", rna);
-        assert_eq!("RNA {CGAU}", rna_dbg);
-        Ok(())
-    }
-
+    /// Testing that equality is defined for references - because we can't share instances of this
+    /// type in any other way.
     #[test]
     fn test_rna_shared() {
         let rna = Rna::new("CGAU").unwrap();
