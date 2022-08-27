@@ -5,6 +5,9 @@
 
 use core::fmt::Debug;
 
+pub mod api_tests_mut;
+pub mod api_tests_mut_wipe_on_leave;
+pub mod api_tests_mut_wipe_on_mut;
 pub mod api_tests_read_only;
 pub mod checks;
 

@@ -1,4 +1,4 @@
-use super::{DnaTrait, RnaTrait};
+use crate::{DnaTrait, RnaTrait};
 
 /// test_* functions are a verbatim copy from original Exercism's tests from
 /// https://github.com/exercism/rust/blob/main/exercises/practice/rna-transcription/tests/rna-transcription.rs

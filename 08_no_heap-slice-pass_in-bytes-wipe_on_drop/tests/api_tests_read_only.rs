@@ -1,4 +1,4 @@
-use no_heap_slice_pass_in_bytes as dna;
+use no_heap_slice_pass_in_bytes_wipe_on_drop as dna;
 
 #[test]
 fn test_valid_dna_input() {

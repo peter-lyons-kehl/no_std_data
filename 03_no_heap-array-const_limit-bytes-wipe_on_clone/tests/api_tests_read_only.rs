@@ -1,7 +1,8 @@
 #![no_std]
 #![feature(generic_associated_types)]
 
-use no_heap_array_const_generic_limit_bytes as dna;
+use no_heap_array_const_limit_bytes_wipe_on_clone as dna;
+
 use utils::api_tests_read_only::Tests;
 
 struct T {}

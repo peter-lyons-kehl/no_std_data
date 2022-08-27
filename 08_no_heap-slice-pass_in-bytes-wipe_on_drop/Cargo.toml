@@ -1,0 +1,6 @@
+[package]
+edition = "2021"
+name = "no_heap-slice-pass_in-bytes-wipe_on_drop"
+version = "1.0.0"
+[dependencies]
+utils = { path = "../00_utils" }
