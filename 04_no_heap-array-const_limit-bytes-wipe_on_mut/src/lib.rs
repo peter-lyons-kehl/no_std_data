@@ -63,7 +63,7 @@ impl Eq for Rna {}
 
 impl Debug for Rna {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "RNA {{{}}}", self.as_str())
+        write!(f, "RNA({})", self.as_str())
     }
 }
 

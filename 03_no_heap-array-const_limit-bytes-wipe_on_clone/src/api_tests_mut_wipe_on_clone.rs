@@ -15,24 +15,20 @@ impl Tests for T {
 fn leave(rna: dna::Rna) -> dna::Rna {
     rna.clone()
 }
-type TLeave<'a> = Leave<'a, dna::Rna>;
-const CHECK_LEAVE_FUNCTION_SIGNATURE: TLeave = &leave;
-fn _checkLeaveFunctionSignature() {
-    //@TODO remove
-    let leave: TLeave = &leave;
-}
+type _TLeave<'a> = Leave<'a, dna::Rna>;
+const _CHECK_LEAVE_FUNCTION_SIGNATURE: _TLeave = &leave;
 
 fn with_storage_leaked<RES>(
     rna: &dna::Rna,
     with_storage_leaked_call_back: WithStorageLeakedCallBack<bool>,
 ) -> bool {
-    // Be
     let bytes = &rna.rna[..];
     let mut bytes_iter = bytes.into_iter().cloned();
     with_storage_leaked_call_back(&mut bytes_iter)
 }
-type TWithStorageLeaked<'a> = WithStorageLeaked<'a, dna::Rna, bool>;
-const CHECK_WITH_STORAGE_LEAKED: TWithStorageLeaked = &with_storage_leaked::<bool>;
+type _TWithStorageLeaked<'a> = WithStorageLeaked<'a, dna::Rna, bool>;
+const _CHECK_WITH_STORAGE_LEAKED_FUNCTION_SIGNATURE: _TWithStorageLeaked =
+    &with_storage_leaked::<bool>;
 
 #[test]
 fn all_tests() {

@@ -91,20 +91,21 @@ impl Eq for Rna {}
 impl Debug for Rna {
     /// Compared to [../../no_heap-slices-iterator]([../../no_heap-slices-iterator),
     /// [Self::DnaBased] variant here doesn't have `self.iter()`. So we map DNA to RNA chars here.
+    /// Honoring default derived format of a newtype-based implementation, so we can re-use same tests.
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
         // In `no_std` with heap we could have:
         #[cfg(feature = "with_heap")]
         {
             extern crate alloc;
             use alloc::string::String;
-            write!(f, "RNA {{{:?}}}", self.chars().iter().collect::<String>())
+            write!(f, "RNA({:?})", self.chars().iter().collect::<String>())
         }
         // But to make this heapless-compatible, we iterate over characters instead:
         #[cfg(not(feature = "with_heap"))]
         {
-            write!(f, "RNA {{")?;
+            write!(f, "RNA(")?;
             self.chars().iter().try_for_each(|&c| write!(f, "{}", c))?;
-            write!(f, "}}")
+            write!(f, ")")
         }
     }
 }

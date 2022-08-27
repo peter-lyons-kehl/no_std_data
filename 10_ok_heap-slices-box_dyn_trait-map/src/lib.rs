@@ -72,9 +72,9 @@ impl<'a> Eq for Rna<'a> {}
 
 impl<'a> Debug for Rna<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "RNA {{")?;
+        write!(f, "RNA(")?;
         self.iter().try_for_each(|c| write!(f, "{c}"))?;
-        write!(f, "}}")
+        write!(f, ")")
     }
 }
 

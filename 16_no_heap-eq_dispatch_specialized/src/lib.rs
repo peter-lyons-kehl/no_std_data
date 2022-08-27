@@ -79,7 +79,7 @@ impl<'a> Debug for Rna<'a> {
     /// Compared to [../../no_heap-slices-iterator]([../../no_heap-slices-iterator),
     /// [Self::DnaBased] variant here doesn't have `self.iter()`. So we map DNA to RNA chars here.
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "RNA {{")?;
+        write!(f, "RNA(")?;
         match self {
             Rna::GivenNucleotides(rna) => {
                 write!(f, "{rna}")?;
@@ -90,7 +90,7 @@ impl<'a> Debug for Rna<'a> {
                     .try_for_each(|c| write!(f, "{c}"))?;
             }
         }
-        write!(f, "}}")
+        write!(f, ")")
     }
 }
 

@@ -1,5 +1,3 @@
-//! no_std heapless (bare metal/embedded-friendly) shared functionality
-#![no_std]
 // Needed for api_tests::Tests
 #![feature(generic_associated_types)]
 #![feature(associated_type_defaults)]
