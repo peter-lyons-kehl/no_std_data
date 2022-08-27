@@ -1,5 +1,8 @@
 //! no_std heapless (bare metal/embedded-friendly)
 #![no_std]
+// generic_associated_types are not required for the implementation itself, but only for
+// `api_tests_mut_wipe_on_clone` unit tests.
+#![feature(generic_associated_types)]
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
@@ -8,6 +11,9 @@ use utils::api_tests_mut::{RnaTraitMut, RnaTraitMutLeakStorage};
 use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
+
+#[cfg(test)]
+mod api_tests_mut_wipe_on_clone;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
