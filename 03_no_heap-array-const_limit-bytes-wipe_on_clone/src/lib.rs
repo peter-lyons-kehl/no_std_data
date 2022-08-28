@@ -10,10 +10,10 @@ use utils::api_tests_mut::wipe_on_leave::RnaTraitMutWipeOnLeave;
 use utils::api_tests_mut::{RnaTraitMut, RnaTraitMutLeakStorage};
 use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
-const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
-
 #[cfg(test)]
 mod api_tests_mut_wipe_on_clone;
+
+const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
@@ -46,6 +46,10 @@ impl<'a> RnaTrait<'a> for Rna {
 }
 
 impl Rna {
+    /// We do not purge any leftover data. Instead, we do so in `.clone()`. It would most likely be
+    /// wiser (less mistake-prone) to wipe any leftover extra bytes on any modification that
+    /// shortens the content. However, by not doing so we can test that this would actually leak
+    /// data if unhandled. See [`api_tests_mut_wipe_on_clone`].
     fn set_from_iter_impl(&mut self, rna_iter: impl Iterator<Item = char>) -> OurResult<()> {
         let mut char_to_utf8 = [0u8; 4];
         let mut len = 0usize;
@@ -97,6 +101,7 @@ impl Debug for Rna {
 }
 
 impl Clone for Rna {
+    /// We purge any extra leftover data.
     fn clone(&self) -> Self {
         let mut rna = [u8::default(); MAX_NUM_RNA_NUCLEOTIDES];
         for i in 0..self.len {
