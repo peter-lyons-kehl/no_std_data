@@ -1,6 +1,10 @@
 # Goal
 [Examples](https://github.com/peter-kehl/no_std_rna_transcription_patterns) of `no_std` (low level/embedded-friendly) and mostly heapless patterns in Rust.
 
+# Prerequisites
+Requiring `nightly` Rust (July 2022), but only for tests.
+<!-- TODO link to embedd presentation>
+
 # Disclaimers
 ## Disambiguation
 This is not about DNA/RNA/genetic patterns in general or at any detail. Instead, it's a set of
