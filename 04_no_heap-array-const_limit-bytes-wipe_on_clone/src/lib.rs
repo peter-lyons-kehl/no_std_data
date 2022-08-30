@@ -70,8 +70,6 @@ impl Rna {
         Ok(result)
     }
 
-    // @TODO This could be stored & accessed through a Cell. Cell is fine, since we don't have
-    // threads on no_std anyway.
     fn as_str(&self) -> &str {
         str::from_utf8(&self.rna[..self.len]).expect("UTF-8 encoded string of RNA nucleotides")
     }
