@@ -52,20 +52,11 @@ impl Rna {
     fn set_from_iter_impl(&mut self, rna_iter: impl Iterator<Item = char>) -> OurResult<()> {
         let previous_len = self.len;
 
-        let mut len = 0usize;
-        let mut char_to_utf8 = [0u8; 4];
-        for c in rna_iter {
-            let utf8 = c.encode_utf8(&mut char_to_utf8[..]);
-            #[allow(clippy::needless_range_loop)]
-            for i in 0..utf8.len() {
-                self.rna[len] = char_to_utf8[i];
-                len += 1;
-            }
-        }
-        self.len = len;
-        for i in len..previous_len {
+        self.len = utils::char_iter_to_bytes(&mut self.rna, rna_iter);
+        for i in self.len..previous_len {
             self.rna[i] = u8::default();
         }
+
         checks::check_rna_str(self.as_str())?;
         Ok(())
     }

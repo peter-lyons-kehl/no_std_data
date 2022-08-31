@@ -42,6 +42,27 @@ pub fn dna_to_rna(dna_nucl: char) -> char {
     }
 }
 
+/// Iterate over `rna_iter` until its end. Transform its characters to UTF-8 and store them in `result`.
+/// Return number (length) of copied UTF-8 bytes. Panic if `result` doesn't have enough space.
+pub fn char_iter_to_bytes(result: &mut [u8], rna_iter: impl Iterator<Item = char>) -> usize {
+    let mut char_to_utf8 = [0u8; 4];
+    let mut result_idx = 0usize;
+    for c in rna_iter {
+        let utf8 = c.encode_utf8(&mut char_to_utf8[..]);
+        // Prefer not the following two lines due to the function call overhead.
+        // result[result_idx..result_idx + utf8.len()].copy_from_slice(&utf8.as_bytes()[..utf8.len()]);
+        // result_idx += utf8.len();
+        //
+        // Ignoring clippy because of 1-4 items.
+        #[allow(clippy::needless_range_loop)]
+        for i in 0..utf8.len() {
+            result[result_idx] = char_to_utf8[i];
+            result_idx += 1;
+        }
+    }
+    result_idx
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
