@@ -7,7 +7,9 @@ env:
 jobs:
   check:
     runs-on: ubuntu-latest
-    # TODO could we run checks on tests for nightly, and checks on lib sources for nightly+stable+beta?
+    # TODO could we run cargo clippy & cargo check on 01_* to 18_* on nightly+stable+beta, and
+    # cargo clippy & cargo check on 00_utils on nightly, and
+    # cargo test (for all) on nightly?
     steps:
     - uses: actions/checkout@v2
     - uses: actions-rs/toolchain@v1
