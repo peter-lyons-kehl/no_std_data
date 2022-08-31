@@ -78,13 +78,7 @@ impl<'a> Iterator for RnaIterator<'a> {
 
     fn next(&mut self) -> Option<Self::Item> {
         match self {
-            RnaIterator::DnaBased(chars) => {
-                let dna = chars.next();
-                match dna {
-                    Some(nucl) => Some(utils::dna_to_rna(nucl)),
-                    None => None,
-                }
-            }
+            RnaIterator::DnaBased(chars) => chars.next().map(utils::dna_to_rna),
             RnaIterator::GivenNucleotides(chars) => chars.next(),
         }
     }

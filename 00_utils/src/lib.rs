@@ -1,6 +1,7 @@
 // Needed for api_tests::Tests
 #![feature(generic_associated_types)]
 #![feature(associated_type_defaults)]
+//#![feature(stmt_expr_attributes)]
 
 use core::fmt::Debug;
 
@@ -20,6 +21,9 @@ where
     Rna: RnaTrait<'a> + 'a,
 {
     fn new(dna: &'a str) -> OurResult<Self>;
+    /// The common practice is that `into_*` methods consume `self` (rather than taking it by
+    /// reference). However, it's OK to take by reference where possible - making the API more flexible.
+    #[allow(clippy::wrong_self_convention)]
     fn into_rna(&self) -> Rna;
 }
 

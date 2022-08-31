@@ -113,9 +113,7 @@ impl Debug for Rna {
 impl Clone for Rna {
     fn clone(&self) -> Self {
         let mut rna = [char::default(); MAX_NUM_RNA_NUCLEOTIDES];
-        for i in 0..self.len {
-            rna[i] = self.rna[i];
-        }
+        rna[..self.len].copy_from_slice(&self.rna[..self.len]);
         Self { rna, len: self.len }
     }
 }

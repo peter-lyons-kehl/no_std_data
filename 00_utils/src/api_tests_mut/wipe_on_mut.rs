@@ -2,9 +2,8 @@
 
 extern crate alloc;
 
-use crate::api_tests_mut::{self, RnaTraitMut, RnaTraitMutLeakStorage, WithStorageLeaked};
-use crate::{DnaTrait, OurResult, RnaTrait};
-use alloc::vec::Vec;
+use crate::api_tests_mut::{self, RnaTraitMutLeakStorage, WithStorageLeaked};
+use crate::DnaTrait;
 
 /// A marker trait. See [`Tests`].
 pub trait RnaTraitMutWipeOnMut<'a>: RnaTraitMutLeakStorage<'a> {}

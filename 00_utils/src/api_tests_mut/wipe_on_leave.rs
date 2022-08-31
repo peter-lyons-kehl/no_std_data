@@ -1,8 +1,8 @@
 //! Used by implementations *_wipe_on_clone and *_wipe_on_drop.
 
 use crate::api_tests_mut;
-use crate::{DnaTrait, OurResult, RnaTrait};
-use api_tests_mut::{RnaTraitMut, RnaTraitMutLeakStorage, WithStorageLeaked};
+use crate::DnaTrait;
+use api_tests_mut::{RnaTraitMutLeakStorage, WithStorageLeaked};
 
 /// A marker trait. See [`Tests`] and [`Leave`].
 pub trait RnaTraitMutWipeOnLeave<'a>: RnaTraitMutLeakStorage<'a> {}

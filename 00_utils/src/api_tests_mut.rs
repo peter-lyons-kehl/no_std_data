@@ -41,7 +41,8 @@ fn leaks_g_or_a<'a, R: RnaTraitMutLeakStorage<'a>>(
     rna: &R,
     with_storage_leaked: WithStorageLeaked<'a, R, bool>,
 ) -> bool {
-    with_storage_leaked(&rna, &|bytes_iter| {
+    #[allow(clippy::char_lit_as_u8)]
+    with_storage_leaked(rna, &|bytes_iter| {
         let bytes = bytes_iter.collect::<Vec<_>>();
         bytes[1] == 'G' as u8 || bytes[2] == 'A' as u8
     })

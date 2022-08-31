@@ -55,6 +55,7 @@ impl Rna {
         let mut len = 0usize;
         for c in rna_iter {
             let utf8 = c.encode_utf8(&mut char_to_utf8[..]);
+            #[allow(clippy::needless_range_loop)]
             for i in 0..utf8.len() {
                 self.rna[len] = char_to_utf8[i];
                 len += 1;
@@ -78,6 +79,7 @@ impl Rna {
 impl<'a> RnaTraitMut<'a> for Rna {
     fn set_from_iter(&mut self, iter: &mut dyn Iterator<Item = char>) -> OurResult<()> {
         // This wouldn't compile without the extra .map() or some other chaining.
+        #[allow(clippy::map_identity)]
         self.set_from_iter_impl(iter.map(core::convert::identity))
     }
 }
@@ -102,9 +104,7 @@ impl Clone for Rna {
     /// We purge any extra leftover data.
     fn clone(&self) -> Self {
         let mut rna = [u8::default(); MAX_NUM_RNA_NUCLEOTIDES];
-        for i in 0..self.len {
-            rna[i] = self.rna[i];
-        }
+        rna[..self.len].copy_from_slice(&self.rna[..self.len]);
         Self { rna, len: self.len }
     }
 }

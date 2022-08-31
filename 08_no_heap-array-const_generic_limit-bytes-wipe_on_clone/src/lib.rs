@@ -91,9 +91,7 @@ impl<const M: usize> RnaImpl<M> {
     pub fn clone_max_size<const N: usize>(&self) -> RnaImpl<N> {
         assert!(self.len <= N, "Calling clone_max_size on an instance with len={}, but the target maximum size is insufficient: {}.", self.len, N);
         let mut rna = [u8::default(); N];
-        for i in 0..self.len {
-            rna[i] = self.rna[i];
-        }
+        rna[..self.len].copy_from_slice(&self.rna[..self.len]);
         RnaImpl { rna, len: self.len }
     }
 }

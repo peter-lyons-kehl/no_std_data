@@ -2,5 +2,5 @@
 # and https://rust-lang.github.io/rustup/concepts/profiles.html.
 [toolchain]
 channel = "nightly"
-components = [ "rustfmt", "clippy" ]
+components = [ "rustfmt", "clippy", "miri" ]
 profile = "minimal"
