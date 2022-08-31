@@ -1,14 +1,26 @@
+<!-- The following comments hides this section from being shown by
+     https://peter-kehl.github.io/no_std_rna_slice_patterns_presentation.
+-->
+<!-- .slide: data-visibility="hidden" -->
+You can see this text along with additional content and source code sections [in a
+presentation](../no_std_rna_slice_patterns_presentation). That also shows any source code referred
+to below.
+<!-- Any comments in source starting with "presentation-" are anchors/delimiters for the above presentation.
+-->
+---
+
 # Goal
-[Examples](https://github.com/peter-kehl/no_std_rna_transcription_patterns) of `no_std` (low level/embedded-friendly) and mostly heapless patterns in Rust.
+[Examples](https://github.com/peter-kehl/no_std_rna_slice_patterns) of `no_std` (low
+level/embedded-friendly) and mostly heapless & slice-handling patterns in Rust.
 
 # Prerequisites
-Requiring `nightly` Rust (July 2022), but only for tests.
-<!-- TODO link to embedd presentation>
+- [https://peter-kehl.github.io/no_std_rust_lib_presentation](no_std_rust_lib_presentation)
+- `nightly` Rust (July 2022), but only for test purposes. The actual implementations work with `stable`.
 
 # Disclaimers
 ## Disambiguation
 This is not about DNA/RNA/genetic patterns in general or at any detail. Instead, it's a set of
-implementations of Exercism > Rust Track > RNA Transcription exercise.
+implementations of [Exercism](https://exercism.org) > [Rust Track](https://exercism.org/tracks/rust) > [RNA Transcription exercise](https://exercism.org/tracks/rust/exercises/rna-transcription).
 
 # Omitted & non-standard documentation
 Big parts of these examples are repetitive. For brevity, similar items are docummented only once: at
@@ -31,7 +43,7 @@ In order to upload this to Exercism, you'd need to
 ---
 
 # Suggested order
-These [examples](https://github.com/peter-kehl/no_std_rna_transcription_patterns) are ordered by complexity or level of abstraction:
+These [examples](https://github.com/peter-kehl/no_std_rna_slice_patterns) are ordered by complexity or level of abstraction:
 
 - 00_utils (shared utilities)
 - 01_ok_heap-string
