@@ -1,6 +1,9 @@
 # See https://rust-lang.github.io/rustup/overrides.html
 # and https://rust-lang.github.io/rustup/concepts/profiles.html.
 [toolchain]
-channel = "nightly"
+# channel = "nightly"
+# Sometimes MIRI is not available. (See https://rust-lang.github.io/rustup-components-history.)
+# Then specify a date-stamped channel, like the below. See https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file.
+channel = "nightly-2022-08-27"
 components = [ "rustfmt", "clippy", "miri" ]
 profile = "minimal"
