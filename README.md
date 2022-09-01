@@ -40,10 +40,11 @@ In order to upload this to Exercism, you'd need to
   in its `tests/rna-transcription.rs`; and
 - rename the crate's directory to `rna-transcription`.
 
+See also the [exercise source](https://github.com/exercism/rust/tree/main/exercises/practice/rna-transcription).
 ---
 
 # Suggested order
-These [examples](https://github.com/peter-kehl/no_std_rna_slice_patterns) are ordered by complexity or level of abstraction:
+These [examples](https://github.com/peter-kehl/no_std_rna_slice_patterns) are ordered by complexity or level of indirection/abstraction:
 
 - 00_utils (shared utilities)
 - 01_ok_heap-string
