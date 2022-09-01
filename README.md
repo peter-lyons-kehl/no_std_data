@@ -41,27 +41,3 @@ In order to upload this to Exercism, you'd need to
 - rename the crate's directory to `rna-transcription`.
 
 See also the [exercise source](https://github.com/exercism/rust/tree/main/exercises/practice/rna-transcription).
----
-
-# Suggested order
-These [examples](https://github.com/peter-kehl/no_std_rna_slice_patterns) are ordered by complexity or level of indirection/abstraction:
-
-- 00_utils (shared utilities)
-- 01_ok_heap-string
-- 02_no_heap-array-const_limit-chars
-- 03_no_heap-array-const_limit-bytes-wipe_on_clone
-- 04_no_heap-array-const_limit-bytes-wipe_on_mut
-- 05_no_heap-array-const_generic_exact-bytes
-- 06_no_heap-array-const_generic_limit-bytes-wipe_on_clone
-- 07_no_heap-array-const_generic_limit-bytes-wipe_on_mut
-- 08_no_heap-slice-pass_in-bytes-wipe_on_drop
-- 09_no_heap-slice-pass_in-bytes-wipe_on_mut
-- 10_ok_heap-slices-box_dyn_trait-map
-- 11_no_heap-slices-iterator_enum
-- 12_no_heap-slices-iterator_impl
-- 13_no_heap-eq_branch_iterators-dyn_trait
-- 14_no_heap-eq_branch_iterators-matrix
-- 15_no_heap-eq_iterator_to_generic_fn
-- 16_no_heap-eq_dispatch_specialized
-- 17_no_heap-eq_dispatch_universal
-
