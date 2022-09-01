@@ -11,6 +11,7 @@ pub struct Dna<'a>(&'a str);
 
 /// This can't derive, neither implement, [`Clone`]. Why? Because a mutable reference (`rna` field)
 /// can't be cloned.
+/// -- TODO change that for the immutable version (once implemented)
 ///
 /// New to Rust? We can't just clone the referenced data and use a new reference, because any data
 /// in Rust has to be owned from exactly one place. However,  the goal of this implementation is not
@@ -20,6 +21,8 @@ pub enum Rna<'a> {
     /// The characters in the byte slice represent, or will represent, RNA.
     MutableNucleotides {
         /// The whole/available storage.
+        /// TODO implement mutable operations.
+        /// TODO change to non-mutable slice - for a separate implementation that is immutable.
         rna: &'a mut [u8],
         /// Length of the valid subslice (used storage).
         len: usize,
