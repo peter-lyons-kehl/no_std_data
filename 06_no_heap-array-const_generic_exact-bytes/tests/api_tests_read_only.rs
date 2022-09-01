@@ -93,3 +93,5 @@ fn test_transcribes_all_dna_to_rna() {
         dna::Dna::new("ACGTGGTCTTAA").unwrap().into_rna()
     )
 }
+
+// @TODO test that if const N is different to size of the slice, then panic

@@ -69,7 +69,7 @@ impl<const M: usize> RnaImpl<M> {
         let rna = core::array::from_fn(|_| {
             if let Some(c) = rna_iter.next() {
                 len += 1;
-                c as u8
+                c as u8 // TODO Potential UTF-8 problem - or factor out the other UTF8 solution to utils?
             } else {
                 0 // extra slots - not used by current data
             }

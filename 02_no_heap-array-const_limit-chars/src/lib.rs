@@ -66,7 +66,12 @@ impl<'a> RnaTrait<'a> for Rna {
 }
 impl Rna {
     fn new_from_iter(rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
+        //@TODO check if Default works for MAX_NUM_RNA_NUCLEOTIDES over 25
         let mut result = Rna::default();
+        /*let mut result = Rna {
+            rna: [char::default(); MAX_NUM_RNA_NUCLEOTIDES],
+            len: 0
+        };*/
         for c in rna_iter {
             result.rna[result.len] = c;
             result.len += 1;
