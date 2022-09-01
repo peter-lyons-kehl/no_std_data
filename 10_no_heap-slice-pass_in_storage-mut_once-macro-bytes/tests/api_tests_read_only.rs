@@ -1,4 +1,7 @@
+use dna::into_rna;
 use no_heap_slice_pass_in_bytes_wipe_on_drop as dna;
+// @TODO
+use no_heap_slice_pass_in_bytes_wipe_on_drop::{Dna, Rna};
 
 #[test]
 fn test_valid_dna_input() {
@@ -40,42 +43,72 @@ fn test_acid_equals_acid() {
 
 #[test]
 fn test_transcribes_cytosine_guanine() {
+    let mut storage = [0u8; 1];
     assert_eq!(
         dna::Rna::new("G").unwrap(),
-        dna::Dna::new("C").unwrap().into_rna(&mut [0u8; 1])
+        into_rna!(&dna::Dna::new("C").unwrap(), storage)
     );
 }
 
 #[test]
+fn test_transcribes_cytosine_guanine_storage_can_be_shared() {
+    let mut storage = [0u8; 1];
+    // We can't pass &mut here. See test_transcribes_cytosine_guanine_storage_can_be_shared_expanded
+    // for the reason.
+    let rna = into_rna!(&dna::Dna::new("C").unwrap(), storage);
+    assert_eq!(storage.len(), 1);
+    assert_eq!(dna::Rna::new("G").unwrap(), rna);
+}
+
+#[test]
+fn test_transcribes_cytosine_guanine_storage_can_be_shared_expanded() {
+    let mut storage = [0u8; 1];
+
+    let len = dna::Dna::new("C")
+        .unwrap()
+        .prepare_storage_from_dna(&mut storage);
+    // Can't have the (unnecessary) `mut` in the following, because we couldn't borrow it as shared
+    // later - even though `Rna::from_prepared_storage` uses the given slice as shared only.
+    //
+    // let rna = Rna::from_prepared_storage(&mut storage, len);
+    let rna = Rna::from_prepared_storage(&storage, len);
+
+    assert_eq!(storage.len(), 1);
+    assert_eq!(dna::Rna::new("G").unwrap(), rna);
+}
+
+#[test]
 fn test_transcribes_guanine_cytosine() {
+    let mut storage = [0u8; 1];
     assert_eq!(
         dna::Rna::new("C").unwrap(),
-        dna::Dna::new("G").unwrap().into_rna(&mut [0u8; 2])
+        into_rna!(&dna::Dna::new("G").unwrap(), storage)
     );
 }
 
 #[test]
 fn test_transcribes_adenine_uracil() {
+    let mut storage = [0u8; 4];
     assert_eq!(
         dna::Rna::new("U").unwrap(),
-        dna::Dna::new("A").unwrap().into_rna(&mut [0u8; 4])
+        into_rna!(&dna::Dna::new("A").unwrap(), storage)
     );
 }
 
 #[test]
 fn test_transcribes_thymine_to_adenine() {
+    let mut storage = [0u8; 1];
     assert_eq!(
         dna::Rna::new("A").unwrap(),
-        dna::Dna::new("T").unwrap().into_rna(&mut [0u8; 4])
+        into_rna!(&dna::Dna::new("T").unwrap(), storage)
     );
 }
 
 #[test]
 fn test_transcribes_all_dna_to_rna() {
+    let mut storage = [0u8; 12];
     assert_eq!(
         dna::Rna::new("UGCACCAGAAUU").unwrap(),
-        dna::Dna::new("ACGTGGTCTTAA")
-            .unwrap()
-            .into_rna(&mut [0u8; 12])
+        into_rna!(&dna::Dna::new("ACGTGGTCTTAA").unwrap(), storage)
     )
 }

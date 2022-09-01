@@ -21,8 +21,7 @@ pub enum Rna<'a> {
     /// The characters in the byte slice represent, or will represent, RNA.
     MutableNucleotides {
         /// The whole/available storage.
-        /// TODO implement mutable operations.
-        /// TODO change to non-mutable slice - for a separate implementation that is immutable.
+        /// TODO implement mutable operations. Panic on the first invariant.
         rna: &'a mut [u8],
         /// Length of the valid subslice (used storage).
         len: usize,
@@ -49,7 +48,6 @@ impl<'a> Rna<'a> {
         Ok(Self::GivenNucleotides(rna))
     }
 
-    // Not Unicode-friendly.
     fn new_from_iter_and_storage<'s>(
         rna_iter: impl Iterator<Item = char>,
         storage: &'s mut [u8],
@@ -57,13 +55,8 @@ impl<'a> Rna<'a> {
     where
         's: 'a,
     {
-        let mut len = 0usize;
-        for c in rna_iter {
-            storage[len] = c as u8;
-            len += 1;
-        }
+        let len = utils::char_iter_to_bytes(storage, rna_iter);
         let result = Self::MutableNucleotides { rna: storage, len };
-        // This would not work for Unicode in general.
         checks::check_rna_str(result.as_str())?;
         Ok(result)
     }
