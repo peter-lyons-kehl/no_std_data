@@ -4,7 +4,6 @@ use utils::api_tests_mut::RnaTraitMutLeakStorage;
 use utils::{DnaTrait, OurResult, RnaTrait, RnaTraitMut};
 use alloc::vec::Vec;
 
-pub mod wipe_on_leave;
 pub mod wipe_on_mut;
 
 /// Type (signature) of a call back function that [`Tests`] trait passes to the user-provided

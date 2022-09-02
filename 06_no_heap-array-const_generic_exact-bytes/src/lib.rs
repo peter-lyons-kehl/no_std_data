@@ -1,9 +1,9 @@
 //! no_std heapless (bare metal/embedded-friendly)
 #![no_std]
 
-use utils::{checks, DnaTrait, OurResult, RnaTrait};
 #[cfg(test)]
 use test_harness;
+use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 /// Fixed length.
 ///

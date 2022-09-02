@@ -1,16 +1,7 @@
 extern crate alloc;
 
-use crate::{OurResult, RnaTrait};
+use crate::RnaTraitMut;
 use alloc::vec::Vec;
-
-pub mod wipe_on_leave;
-pub mod wipe_on_mut;
-
-pub trait RnaTraitMut<'a>: RnaTrait<'a> {
-    /// Mutate `self`: Make it store all characters in the given `iter`. Fail if `iter` doesn't
-    /// satisfy requirements particular of the given implementation.
-    fn set_from_iter(&mut self, iter: &mut dyn Iterator<Item = char>) -> OurResult<()>;
-}
 
 /// A marker trait. See [`Tests`] and [`Leave`].
 pub trait RnaTraitMutLeakStorage<'a>: RnaTraitMut<'a> {}

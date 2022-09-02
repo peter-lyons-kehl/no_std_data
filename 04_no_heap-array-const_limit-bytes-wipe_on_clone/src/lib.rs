@@ -6,9 +6,8 @@
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
-use utils::api_tests_mut::wipe_on_leave::RnaTraitMutWipeOnLeave;
-use utils::api_tests_mut::{RnaTraitMut, RnaTraitMutLeakStorage};
-use utils::{checks, DnaTrait, OurResult, RnaTrait};
+use utils::api_tests_mut::RnaTraitMutLeakStorage;
+use utils::{checks, DnaTrait, OurResult, RnaTrait, RnaTraitMut};
 
 #[cfg(test)]
 mod api_tests_mut_wipe_on_clone;
@@ -76,7 +75,6 @@ impl<'a> RnaTraitMut<'a> for Rna {
 }
 
 impl<'a> RnaTraitMutLeakStorage<'a> for Rna {}
-impl<'a> RnaTraitMutWipeOnLeave<'a> for Rna {}
 
 impl PartialEq for Rna {
     fn eq(&self, other: &Self) -> bool {

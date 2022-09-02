@@ -1,7 +1,7 @@
 use core::fmt::Debug;
 
-pub mod checks;
 pub mod api_tests_mut;
+pub mod checks;
 
 pub trait DnaTrait<'a, Rna>: Sized + PartialEq + Eq + Debug
 where
