@@ -1,8 +1,8 @@
 //! no_std heapless (bare metal/embedded-friendly)
 #![no_std]
 // Needed as of August 2022, only for RnaImpl::clone_max_size.
-#![allow(incomplete_features)]
-#![feature(generic_const_exprs)]
+//#![allow(incomplete_features)]
+//#![feature(generic_const_exprs)]
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;

@@ -4,4 +4,6 @@ name = "no_heap-array-const_generic_limit-bytes-wipe_on_clone"
 version = "1.0.0"
 [dependencies]
 utils = { path = "../00_utils" }
+
+[dev-dependencies]
 test_harness = { path = "../00_test_harness" }
