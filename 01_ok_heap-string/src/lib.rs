@@ -5,6 +5,8 @@ extern crate alloc;
 use alloc::{borrow::ToOwned, string::String};
 use core::fmt::Debug;
 use utils::{checks, DnaTrait, OurResult, RnaTrait};
+#[cfg(test)]
+use test_harness;
 
 /// DNA (DNA nucleotide sequence).  
 ///

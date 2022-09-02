@@ -1,20 +1,7 @@
-// Needed for api_tests::Tests
-#![feature(generic_associated_types)]
-#![feature(associated_type_defaults)]
-//#![feature(stmt_expr_attributes)]
-
 use core::fmt::Debug;
 
-pub mod api_tests_mut;
-pub mod api_tests_read_only;
 pub mod checks;
-
-/// Custom result type. It works with our Exercism exercise (the error variant uses `usize` to
-/// indicate a 0-based character index that is not a valid DNA/RNA nucleotide). Type parameter `T`
-/// is the success variant type, carrying a result as needed.
-///
-// New to Rust? Question mark operator shortcuts on error and returns it here.
-pub type OurResult<T> = Result<T, usize>;
+pub mod api_tests_mut;
 
 pub trait DnaTrait<'a, Rna>: Sized + PartialEq + Eq + Debug
 where
@@ -30,6 +17,19 @@ where
 pub trait RnaTrait<'a>: Sized + PartialEq + Eq + Debug {
     fn new(rna: &'a str) -> OurResult<Self>;
 }
+
+pub trait RnaTraitMut<'a>: RnaTrait<'a> {
+    /// Mutate `self`: Make it store all characters in the given `iter`. Fail if `iter` doesn't
+    /// satisfy requirements particular of the given implementation.
+    fn set_from_iter(&mut self, iter: &mut dyn Iterator<Item = char>) -> OurResult<()>;
+}
+
+/// Custom result type. It works with our Exercism exercise (the error variant uses `usize` to
+/// indicate a 0-based character index that is not a valid DNA/RNA nucleotide). Type parameter `T`
+/// is the success variant type, carrying a result as needed.
+///
+// New to Rust? Question mark operator shortcuts on error and returns it here.
+pub type OurResult<T> = Result<T, usize>;
 
 /// Translate DNA nucleotide `dna_nucl` to a RNA nucleaotide. [`panic`] if `dna_nucl` is invalid.
 pub fn dna_to_rna(dna_nucl: char) -> char {
@@ -78,4 +78,6 @@ mod tests {
     fn test_dna_to_rna_panic_invalid() {
         super::dna_to_rna('U');
     }
+
+    // @TODO test for char_iter_to_bytes()
 }

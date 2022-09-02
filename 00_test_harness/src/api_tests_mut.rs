@@ -1,19 +1,11 @@
 extern crate alloc;
 
-use crate::{OurResult, RnaTrait};
+use utils::api_tests_mut::RnaTraitMutLeakStorage;
+use utils::{DnaTrait, OurResult, RnaTrait, RnaTraitMut};
 use alloc::vec::Vec;
 
 pub mod wipe_on_leave;
 pub mod wipe_on_mut;
-
-pub trait RnaTraitMut<'a>: RnaTrait<'a> {
-    /// Mutate `self`: Make it store all characters in the given `iter`. Fail if `iter` doesn't
-    /// satisfy requirements particular of the given implementation.
-    fn set_from_iter(&mut self, iter: &mut dyn Iterator<Item = char>) -> OurResult<()>;
-}
-
-/// A marker trait. See [`Tests`] and [`Leave`].
-pub trait RnaTraitMutLeakStorage<'a>: RnaTraitMut<'a> {}
 
 /// Type (signature) of a call back function that [`Tests`] trait passes to the user-provided
 /// function that has signature [`WithStorageLeaked`]. [`Tests`] does that in  its `test_`
@@ -46,4 +38,26 @@ fn leaks_g_or_a<'a, R: RnaTraitMutLeakStorage<'a>>(
         let bytes = bytes_iter.collect::<Vec<_>>();
         bytes[1] == 'G' as u8 || bytes[2] == 'A' as u8
     })
+}
+
+pub trait Tests {
+    type Dna<'a>: DnaTrait<'a, Self::Rna<'a>>;
+    type Rna<'a>: RnaTraitMut<'a> + 'a;
+
+    fn test_modify_string_based_rna() -> OurResult<()> {
+        let mut rna_one = Self::Rna::new("CGAU")?;
+        let nucleotides = "UAGC";
+        let mut nucleotides_iter = nucleotides.chars();
+        rna_one.set_from_iter(&mut nucleotides_iter)?;
+
+        let rna_two = Self::Rna::new("UAGC")?;
+        assert_eq!(rna_one, rna_two);
+
+        Ok(())
+    }
+
+    fn all_tests() -> OurResult<()> {
+        Self::test_modify_string_based_rna()?;
+        Ok(())
+    }
 }

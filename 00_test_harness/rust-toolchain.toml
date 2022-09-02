@@ -1,0 +1,14 @@
+# See https://rust-lang.github.io/rustup/overrides.html
+# and https://rust-lang.github.io/rustup/concepts/profiles.html.
+[toolchain]
+# On GitHub: Keep channel = "nightly". actions-rs (invoked by .github/worklows/test.yml) seems to
+# retrieve the most recent nightly with MIRI.
+# channel = "nightly"
+#
+# Local: Sometimes MIRI is not available. (See
+# https://rust-lang.github.io/rustup-components-history.) Then specify a date-stamped channel, like
+# the below. See https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file.
+# channel = "nightly-2022-08-27"
+channel = "nightly"
+components = [ "rustfmt", "clippy", "miri" ]
+profile = "minimal"

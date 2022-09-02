@@ -6,8 +6,9 @@
 
 use core::fmt::{self, Debug, Formatter};
 use core::{slice, str};
-use utils::api_tests_mut::wipe_on_leave::RnaTraitMutWipeOnLeave;
-use utils::api_tests_mut::{RnaTraitMut, RnaTraitMutLeakStorage};
+use test_harness::api_tests_mut::wipe_on_leave::RnaTraitMutWipeOnLeave;
+use test_harness::api_tests_mut::RnaTraitMutLeakStorage;
+use utils::RnaTraitMut;
 use utils::{checks, DnaTrait, OurResult, RnaTrait};
 
 #[cfg(test)]

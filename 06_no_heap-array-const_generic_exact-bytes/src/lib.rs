@@ -2,6 +2,8 @@
 #![no_std]
 
 use utils::{checks, DnaTrait, OurResult, RnaTrait};
+#[cfg(test)]
+use test_harness;
 
 /// Fixed length.
 ///
