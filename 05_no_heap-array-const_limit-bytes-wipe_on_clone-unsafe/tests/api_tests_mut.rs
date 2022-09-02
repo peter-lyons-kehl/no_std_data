@@ -3,7 +3,7 @@
 
 use no_heap_array_const_limit_bytes_wipe_on_clone_unsafe as dna;
 
-use utils::api_tests_mut::Tests;
+use test_harness::api_tests_mut::Tests;
 use utils::OurResult;
 
 struct T {}

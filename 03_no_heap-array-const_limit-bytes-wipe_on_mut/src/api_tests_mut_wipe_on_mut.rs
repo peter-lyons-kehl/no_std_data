@@ -2,7 +2,7 @@
 ///! private access to [`dna::Rna::rna`].
 use crate as dna;
 
-use utils::api_tests_mut::wipe_on_mut::Tests;
+use test_harness::api_tests_mut::wipe_on_mut::Tests;
 use utils::api_tests_mut::{WithStorageLeaked, WithStorageLeakedCallBack};
 
 struct T {}

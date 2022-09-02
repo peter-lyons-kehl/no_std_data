@@ -9,8 +9,9 @@ use core::str;
 use utils::api_tests_mut::RnaTraitMutLeakStorage;
 use utils::{checks, DnaTrait, OurResult, RnaTrait, RnaTraitMut};
 
-#[cfg(test)]
-mod api_tests_mut_wipe_on_clone;
+// @TODO
+// #[cfg(test)]
+// mod api_tests_mut_wipe_on_mut;
 
 const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
 

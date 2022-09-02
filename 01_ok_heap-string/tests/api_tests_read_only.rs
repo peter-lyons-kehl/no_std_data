@@ -4,7 +4,7 @@
 #![feature(generic_associated_types)]
 
 use ok_heap_string as dna;
-use utils::api_tests_read_only::Tests;
+use test_harness::api_tests_read_only::Tests;
 
 struct T {}
 impl Tests for T {

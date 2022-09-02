@@ -3,7 +3,7 @@
 
 use no_heap_eq_branch_iterators_matrix as dna;
 
-use utils::api_tests_read_only::Tests;
+use test_harness::api_tests_read_only::Tests;
 
 struct T {}
 impl Tests for T {
