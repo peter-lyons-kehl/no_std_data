@@ -1,0 +1,28 @@
+[package]
+name = "test_compile_on_stable"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# We do not use test_harness, because that requires nightly.
+utils = { path = "../00_utils" }
+ok_heap-string = { path = "../01_ok_heap-string" }
+no_heap-array-const_limit-chars= { path = "../02_no_heap-array-const_limit-chars" }
+no_heap-array-const_limit-bytes-wipe_on_mut = { path = "../03_no_heap-array-const_limit-bytes-wipe_on_mut" }
+no_heap-array-const_limit-bytes-wipe_on_clone = { path = "../04_no_heap-array-const_limit-bytes-wipe_on_clone" }
+no_heap-array-const_limit-bytes-wipe_on_clone-unsafe = { path = "../05_no_heap-array-const_limit-bytes-wipe_on_clone-unsafe" }
+no_heap-array-const_generic_exact-bytes = { path = "../06_no_heap-array-const_generic_exact-bytes" }
+no_heap-array-const_generic_limit-bytes-wipe_on_mut = { path = "../07_no_heap-array-const_generic_limit-bytes-wipe_on_mut" }
+no_heap-array-const_generic_limit-bytes-wipe_on_clone = { path = "../08_no_heap-array-const_generic_limit-bytes-wipe_on_clone" }
+no_heap-slice-pass_in-bytes-wipe_on_mut = { path = "../09_no_heap-slice-pass_in-bytes-wipe_on_mut" }
+no_heap-slice-pass_in_storage-mut_once-macro-bytes = { path = "../10_no_heap-slice-pass_in_storage-mut_once-macro-bytes" }
+ok_heap-slices-box_dyn_trait-map = { path = "../11_ok_heap-slices-box_dyn_trait-map" }
+no_heap-slices-iterator_enum = { path = "../12_no_heap-slices-iterator_enum" }
+no_heap-slices-iterator_impl = { path = "../13_no_heap-slices-iterator_impl" }
+no_heap-eq_branch_iterators-dyn_trait = { path = "../14_no_heap-eq_branch_iterators-dyn_trait" }
+no_heap-eq_branch_iterators-matrix = { path = "../15_no_heap-eq_branch_iterators-matrix" }
+no_heap-eq_iterator_to_generic_fn = { path = "../16_no_heap-eq_iterator_to_generic_fn" }
+no_heap-eq_dispatch_specialized = { path = "../17_no_heap-eq_dispatch_specialized" }
+no_heap-eq_dispatch_universal = { path = "../18_no_heap-eq_dispatch_universal" }

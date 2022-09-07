@@ -2,7 +2,8 @@
 #![no_std]
 // generic_associated_types are not required for the implementation itself, but only for
 // `api_tests_mut_wipe_on_clone` unit tests.
-//#![feature(generic_associated_types)]
+// #[cfg_attr(test, feature = "generic_associated_types" )]
+#![cfg_attr(test, feature(generic_associated_types))]
 
 use core::fmt::{self, Debug, Formatter};
 use core::str;
