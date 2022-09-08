@@ -3,7 +3,7 @@
 // Needed for implementing api_tests::Tests
 #![feature(generic_associated_types)]
 
-use ok_heap_string as dna;
+use on_heap_string as dna;
 use test_harness::api_tests_read_only::Tests;
 
 struct T {}

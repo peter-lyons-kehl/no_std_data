@@ -1,7 +1,7 @@
 #![no_std]
 #![feature(generic_associated_types)]
 
-use ok_heap_slices_box_dyn_trait_map as dna;
+use on_heap_slices_box_dyn_trait_map as dna;
 
 use test_harness::api_tests_read_only::Tests;
 

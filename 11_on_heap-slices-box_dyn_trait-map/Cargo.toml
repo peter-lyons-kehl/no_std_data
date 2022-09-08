@@ -1,6 +1,6 @@
 [package]
 edition = "2021"
-name = "ok_heap-slices-box_dyn_trait-map"
+name = "on_heap-slices-box_dyn_trait-map"
 version = "1.0.0"
 
 [dependencies]

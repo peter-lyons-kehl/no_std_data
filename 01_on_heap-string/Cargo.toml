@@ -1,6 +1,6 @@
 [package]
 edition = "2021"
-name = "ok_heap-string"
+name = "on_heap-string"
 version = "1.0.0"
 
 [dependencies]
