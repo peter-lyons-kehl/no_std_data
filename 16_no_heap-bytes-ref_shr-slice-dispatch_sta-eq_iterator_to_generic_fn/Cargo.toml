@@ -1,0 +1,9 @@
+[package]
+edition = "2021"
+name = "no_heap-bytes-ref_shr-slice-dispatch_sta-eq_iterator_to_generic_fn"
+version = "1.0.0"
+[dependencies]
+utils = { path = "../00_utils" }
+
+[dev-dependencies]
+test_harness = { path = "../00_test_harness" }

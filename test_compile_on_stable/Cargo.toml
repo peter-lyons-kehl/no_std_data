@@ -8,21 +8,21 @@ edition = "2021"
 [dependencies]
 # We do not use test_harness, because that requires nightly.
 utils = { path = "../00_utils" }
-ok_heap-string = { path = "../01_on_heap-string" }
-no_heap-array-const_limit-chars= { path = "../02_no_heap-array-const_limit-chars" }
-no_heap-array-const_limit-bytes-wipe_on_mut = { path = "../03_no_heap-array-const_limit-bytes-wipe_on_mut" }
-no_heap-array-const_limit-bytes-wipe_on_clone = { path = "../04_no_heap-array-const_limit-bytes-wipe_on_clone" }
-no_heap-array-const_limit-bytes-wipe_on_clone-unsafe = { path = "../05_no_heap-array-const_limit-bytes-wipe_on_clone-unsafe" }
-no_heap-array-const_generic_exact-bytes = { path = "../06_no_heap-array-const_generic_exact-bytes" }
-no_heap-array-const_generic_limit-bytes-wipe_on_mut = { path = "../07_no_heap-array-const_generic_limit-bytes-wipe_on_mut" }
-no_heap-array-const_generic_limit-bytes-wipe_on_clone = { path = "../08_no_heap-array-const_generic_limit-bytes-wipe_on_clone" }
-no_heap-slice-pass_in-bytes-wipe_on_mut = { path = "../09_no_heap-slice-pass_in-bytes-wipe_on_mut" }
-no_heap-slice-pass_in_storage-mut_once-macro-bytes = { path = "../10_no_heap-slice-pass_in_storage-mut_once-macro-bytes" }
-ok_heap-slices-box_dyn_trait-map = { path = "../11_on_heap-slices-box_dyn_trait-map" }
-no_heap-slices-iterator_enum = { path = "../12_no_heap-slices-iterator_enum" }
-no_heap-slices-iterator_impl = { path = "../13_no_heap-slices-iterator_impl" }
-no_heap-eq_branch_iterators-dyn_trait = { path = "../14_no_heap-eq_branch_iterators-dyn_trait" }
-no_heap-eq_branch_iterators-matrix = { path = "../15_no_heap-eq_branch_iterators-matrix" }
-no_heap-eq_iterator_to_generic_fn = { path = "../16_no_heap-eq_iterator_to_generic_fn" }
-no_heap-eq_dispatch_specialized = { path = "../17_no_heap-eq_dispatch_specialized" }
-no_heap-eq_dispatch_universal = { path = "../18_no_heap-eq_dispatch_universal" }
+on_heap-bytes-own_mut-string = { path = "../01_on_heap-bytes-own_mut-string" }
+no_heap-chars-own_mut-array-const_overall-limit= { path = "../02_no_heap-chars-own_mut-array-const_overall-limit" }
+no_heap-bytes-own_mut-array-const_overall-limit-wipe_on_mut = { path = "../03_no_heap-bytes-own_mut-array-const_overall-limit-wipe_on_mut" }
+no_heap-bytes-own_mut-array-const_overall-limit-wipe_on_clone = { path = "../04_no_heap-bytes-own_mut-array-const_overall-limit-wipe_on_clone" }
+no_heap-bytes-own_mut-array-const_overall-limit-wipe_on_clone-unsafe = { path = "../05_no_heap-bytes-own_mut-array-const_overall-limit-wipe_on_clone-unsafe" }
+no_heap-bytes-own_mut-array-const_generic-exact = { path = "../06_no_heap-bytes-own_mut-array-const_generic-exact" }
+no_heap-bytes-own_mut-array-const_generic-limit-wipe_on_mut = { path = "../07_no_heap-bytes-own_mut-array-const_generic-limit-wipe_on_mut" }
+no_heap-bytes-own_mut-array-const_generic-limit-wipe_on_clone = { path = "../08_no_heap-bytes-own_mut-array-const_generic-limit-wipe_on_clone" }
+no_heap-bytes-ref_mut-slice-pass_in_storage-mut_anytime = { path = "../09_no_heap-bytes-ref_mut-slice-pass_in_storage-mut_anytime" }
+no_heap-bytes-ref_mix-slice-pass_in_storage-mut_initial-macro = { path = "../10_no_heap-bytes-ref_mix-slice-pass_in_storage-mut_initial-macro" }
+on_heap-bytes-ref_shr-slice-dispatch_dyn-map = { path = "../11_on_heap-bytes-slice-dispatch_dyn-map" }
+no_heap-bytes-ref_shr-slice-dispatch_sta-iterator_enum = { path = "../12_no_heap-bytes-ref_shr-slice-dispatch_sta-iterator_enum" }
+no_heap-bytes-ref_shr-slice-dispatch_sta-iterator_impl = { path = "../13_no_heap-bytes-ref_shr-slice-dispatch_sta-iterator_impl" }
+no_heap-bytes-ref_shr-slice-dispatch_dyn-eq_branch_iterators = { path = "../14_no_heap-bytes-ref_shr-slice-dispatch_dyn-eq_branch_iterators" }
+no_heap-bytes-ref_shr-slice-dispatch_sta-eq_branch_iterators-matrix = { path = "../15_no_heap-bytes-ref_shr-slice-dispatch_sta-eq_branch_iterators-matrix" }
+no_heap-bytes-ref_shr-slice-dispatch_sta-eq_iterator_to_generic_fn = { path = "../16_no_heap-bytes-ref_shr-slice-dispatch_sta-eq_iterator_to_generic_fn" }
+no_heap-bytes-ref_shr-slice-dispatch_dyn-eq_dispatch_to_specialized = { path = "../17_no_heap-bytes-ref_shr-slice-dispatch_dyn-eq_dispatch_to_specialized" }
+no_heap-bytes-ref_shr-slice-dispatch_dyn-eq_dispatch_to_universal = { path = "../18_no_heap-bytes-ref_shr-slice-dispatch_dyn-eq_dispatch_to_universal" }
