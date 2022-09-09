@@ -58,7 +58,7 @@ impl<'a> PartialEq for Rna<'a> {
                 other.with_chars_universal(
                     self_chars,
                     |other_chars: &mut dyn Iterator<Item = char>,
-                        self_chars: &mut dyn Iterator<Item = char>| {
+                     self_chars: &mut dyn Iterator<Item = char>| {
                         other_chars.eq(self_chars)
                     },
                 )

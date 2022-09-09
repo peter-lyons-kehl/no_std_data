@@ -1,5 +1,5 @@
-use no_heap_bytes_ref_mix_slice_pass_in_storage_mut_initial_macro as dna;
 use dna::into_rna;
+use no_heap_bytes_ref_mix_slice_pass_in_storage_mut_initial_macro as dna;
 // @TODO
 use no_heap_bytes_ref_mix_slice_pass_in_storage_mut_initial_macro::{Dna, Rna};
 

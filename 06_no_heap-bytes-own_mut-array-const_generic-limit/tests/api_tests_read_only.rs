@@ -1,8 +1,7 @@
 #![no_std]
 #![feature(generic_associated_types)]
 
-use no_heap_bytes_own_mut_array_const_overall_limit_wipe_on_clone_unsafe as dna;
-
+use no_heap_bytes_own_mut_array_const_generic_limit as dna;
 use test_harness::api_tests_read_only::Tests;
 
 struct T {}

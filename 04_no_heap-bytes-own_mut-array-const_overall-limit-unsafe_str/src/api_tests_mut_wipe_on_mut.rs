@@ -2,8 +2,7 @@
 ///! private access to [`dna::Rna::rna`].
 use crate as dna;
 
-use utils::api_tests_mut::wipe_on_leave::Leave;
-use utils::api_tests_mut::wipe_on_leave::Tests;
+use test_harness::api_tests_mut::wipe_on_mut::Tests;
 use utils::api_tests_mut::{WithStorageLeaked, WithStorageLeakedCallBack};
 
 struct T {}
@@ -11,12 +10,6 @@ impl Tests for T {
     type Dna<'a> = dna::Dna<'a>;
     type Rna<'a> = dna::Rna;
 }
-
-fn leave(rna: dna::Rna) -> dna::Rna {
-    rna.clone()
-}
-type _TLeave<'a> = Leave<'a, dna::Rna>;
-const _CHECK_LEAVE_FUNCTION_SIGNATURE: _TLeave = &leave;
 
 fn with_storage_leaked<RES>(
     rna: &dna::Rna,
@@ -32,7 +25,5 @@ const _CHECK_WITH_STORAGE_LEAKED_FUNCTION_SIGNATURE: _TWithStorageLeaked =
 
 #[test]
 fn all_tests() {
-    T::test_modify_string_based_rna_direct_without_leave_does_leak(&with_storage_leaked::<bool>);
-
-    T::test_modify_string_based_rna_leave_does_not_leak(&leave, &with_storage_leaked::<bool>);
+    T::test_modify_string_based_rna_mutation_does_not_leak(&with_storage_leaked::<bool>);
 }

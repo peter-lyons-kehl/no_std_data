@@ -1,6 +1,6 @@
 [package]
 edition = "2021"
-name = "no_heap-bytes-own_mut-array-const_generic-limit-wipe_on_mut"
+name = "no_heap-bytes-own_mut-array-const_generic-limit"
 version = "1.0.0"
 [dependencies]
 utils = { path = "../00_utils" }
