@@ -1,28 +1,25 @@
 //! no_std heapless (bare metal/embedded-friendly)
 #![no_std]
-// generic_associated_types are not required for the implementation itself, but only for
+// Generic_associated_types are not required for the implementation itself, but only for
 // `api_tests_mut_wipe_on_clone` unit tests.
-// #[cfg_attr(test, feature = "generic_associated_types" )]
+// #![cfg_attr(test, feature = "generic_associated_types" )]
 #![cfg_attr(test, feature(generic_associated_types))]
 
 use core::fmt::{self, Debug, Formatter};
-use core::str;
+use core::{slice, str};
 use utils::api_tests_mut::RnaTraitMutLeakStorage;
 use utils::{checks, DnaTrait, OurResult, RnaTrait, RnaTraitMut};
 
 #[cfg(test)]
 mod api_tests_mut_wipe_on_mut;
 
-const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
+const MAX_NUM_RNA_NUCLEOTIDES: usize = 40;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
 
-/// We derive [`Clone`] and [`Copy`]. That's why we have to purge any extra data after mutating
-/// operation(s). Otherwise we could have data leakage.
-#[derive(Default, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct Rna {
-    // New to Rust? u8 type is an unsigned 8 bit integer, also used to represent a byte.
     rna: [u8; MAX_NUM_RNA_NUCLEOTIDES],
     len: usize,
 }
@@ -57,7 +54,11 @@ impl Rna {
             self.rna[i] = u8::default();
         }
 
-        checks::check_rna_str(self.as_str())?;
+        // Here we must not use self.as_str() yet, The following call to str::from_utf8() verifies
+        // that the bytes are a valid UTF-8 slice. Only then self.as_str() is safe.
+        let slice =
+            str::from_utf8(&self.rna[..self.len]).expect("UTF-8 encoded string of RNA nucleotides");
+        checks::check_rna_str(slice)?;
         Ok(())
     }
     fn new_from_iter(rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
@@ -67,19 +68,29 @@ impl Rna {
     }
 
     fn as_str(&self) -> &str {
-        str::from_utf8(&self.rna[..self.len]).expect("UTF-8 encoded string of RNA nucleotides")
+        unsafe {
+            let u8_slice = slice::from_raw_parts(&self.rna as *const u8, self.len);
+            str::from_utf8_unchecked(u8_slice)
+        }
     }
 }
 
 impl<'a> RnaTraitMut<'a> for Rna {
     fn set_from_iter(&mut self, iter: &mut dyn Iterator<Item = char>) -> OurResult<()> {
-        // This wouldn't compile without the extra .map() or some other chaining.
-        #[allow(clippy::map_identity)]
-        self.set_from_iter_impl(iter.map(core::convert::identity))
+        self.set_from_iter_impl(iter)
     }
 }
 
 impl<'a> RnaTraitMutLeakStorage<'a> for Rna {}
+
+impl Default for Rna {
+    fn default() -> Self {
+        Self {
+            rna: [0; MAX_NUM_RNA_NUCLEOTIDES],
+            len: 0,
+        }
+    }
+}
 
 impl PartialEq for Rna {
     fn eq(&self, other: &Self) -> bool {

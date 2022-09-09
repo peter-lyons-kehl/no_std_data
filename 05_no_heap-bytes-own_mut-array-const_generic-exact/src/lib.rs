@@ -16,7 +16,7 @@ pub struct Dna<'a, const N: usize>(&'a str);
 /// RNA (RNA nucleotide sequence).
 ///
 /// Usable only if the required `const N` parameter is known in compile time. Can't derive Default -
-/// it's defined for arrays with only up to 32 items.
+/// it's defined for arrays with only up to `32` items.
 ///
 /// [`Rna`] in this implementation derives all its traits. It never has any leaking data - it always
 /// uses all its array items. (As a consequence, if we added any mutation methods, those could only

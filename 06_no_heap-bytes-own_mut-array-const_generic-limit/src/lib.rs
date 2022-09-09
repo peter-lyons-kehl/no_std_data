@@ -13,7 +13,6 @@ const DEFAULT_MAX_NUCLEOTIDES: usize = 12;
 /// ['Rna`] size when calling [`Dna::into_rna`].
 ///
 /// We don't derive [`PartialEq`]. Why? Because we want to compare [`Dna`] types regardless of `M`.
-/// (And for security & correctness, if we added mutation methods.)
 #[derive(Debug, Clone, Copy)]
 pub struct DnaImpl<'a, const M: usize = DEFAULT_MAX_NUCLEOTIDES>(&'a str);
 
@@ -21,9 +20,7 @@ pub type Dna<'a> = DnaImpl<'a, DEFAULT_MAX_NUCLEOTIDES>;
 
 /// RNA (RNA nucleotide sequence).
 ///
-/// Usable only if the required `const N` parameter is known in compile time. Can't derive Default -
-/// it's defined for arrays only up to a certain size.
-///
+/// TODO:
 /// We don't derive [`PartialEq`] or [`Debug`] or [`Clone`] or [`Copy`] (neither Serde's
 /// `Serialize`, if we used it). See
 /// [02_no_heap-array-const_limit-chars](../../02_no_heap-array-const_limit-chars/src/lib.rs) for
@@ -61,22 +58,22 @@ impl<'a, const M: usize> RnaTrait<'a> for RnaImpl<M> {
 }
 
 impl<const M: usize> RnaImpl<M> {
-    pub fn new_from_iter(mut rna_iter: impl Iterator<Item = char>) -> OurResult<Self> {
+    pub fn new_from_iter(rna_chars_iter: impl Iterator<Item = char>) -> OurResult<Self> {
         let mut len = 0usize;
+        let mut rna_bytes_iter = utils::char_iter_to_byte_iter(rna_chars_iter);
         let rna = core::array::from_fn(|_| {
-            if let Some(c) = rna_iter.next() {
+            if let Some(b) = rna_bytes_iter.next() {
                 len += 1;
-                c as u8 // TODO Potential UTF-8 problem - or factor out the other UTF8 solution to utils?
+                b
             } else {
                 0 // extra slots - not used by current data
             }
         });
-        if rna_iter.next().is_some() {
-            // Extra characters left.
+        if rna_bytes_iter.next().is_some() {
+            // Extra bytes left.
             return Err(len);
         }
         let result = Self { rna, len };
-        // Only check the valid items: `0..len`. Hence `Iterator::take`.
         checks::check_rna_str(result.as_str())?;
         Ok(result)
     }
@@ -111,7 +108,7 @@ impl<const L: usize, const R: usize> PartialEq<RnaImpl<R>> for RnaImpl<L> {
         self.as_str() == other.as_str()
     }
 }
-/// Not necessary, but valid.
+
 impl<const M: usize> Eq for RnaImpl<M> {}
 
 impl<const M: usize> Debug for RnaImpl<M> {

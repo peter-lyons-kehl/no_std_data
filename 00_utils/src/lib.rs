@@ -44,10 +44,10 @@ pub fn dna_to_rna(dna_nucl: char) -> char {
 
 /// Iterate over `rna_iter` until its end. Transform its characters to UTF-8 and store them in `result`.
 /// Return number (length) of copied UTF-8 bytes. Panic if `result` doesn't have enough space.
-pub fn char_iter_to_bytes(result: &mut [u8], rna_iter: impl Iterator<Item = char>) -> usize {
+pub fn char_iter_to_bytes(result: &mut [u8], char_iter: impl Iterator<Item = char>) -> usize {
     let mut char_to_utf8 = [0u8; 4];
     let mut result_idx = 0usize;
-    for c in rna_iter {
+    for c in char_iter {
         let utf8 = c.encode_utf8(&mut char_to_utf8[..]);
         // Prefer not the following two lines due to the function call overhead.
         // result[result_idx..result_idx + utf8.len()].copy_from_slice(&utf8.as_bytes()[..utf8.len()]);
@@ -61,6 +61,43 @@ pub fn char_iter_to_bytes(result: &mut [u8], rna_iter: impl Iterator<Item = char
         }
     }
     result_idx
+}
+
+// Not public - not a part of public API.
+struct CharBytesIter {
+    char_bytes: [u8; 4],
+    idx: usize,
+    valid_bytes_len: usize,
+}
+
+impl Iterator for CharBytesIter {
+    type Item = u8;
+
+    fn next(&mut self) -> Option<u8> {
+        if self.idx < self.valid_bytes_len {
+            let result = self.char_bytes[self.idx];
+            self.idx += 1;
+            Some(result)
+        } else {
+            None
+        }
+    }
+}
+
+impl CharBytesIter {
+    pub fn new(c: char) -> Self {
+        let mut char_bytes = [0u8; 4];
+        let valid_bytes_len = c.encode_utf8(&mut char_bytes).len();
+        Self {
+            char_bytes,
+            valid_bytes_len,
+            idx: 0,
+        }
+    }
+}
+
+pub fn char_iter_to_byte_iter(char_iter: impl Iterator<Item = char>) -> impl Iterator<Item = u8> {
+    char_iter.flat_map(|c| CharBytesIter::new(c))
 }
 
 #[cfg(test)]

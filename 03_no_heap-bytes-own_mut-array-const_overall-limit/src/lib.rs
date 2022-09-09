@@ -13,14 +13,12 @@ use utils::{checks, DnaTrait, OurResult, RnaTrait, RnaTraitMut};
 #[cfg(test)]
 mod api_tests_mut_wipe_on_mut;
 
-const MAX_NUM_RNA_NUCLEOTIDES: usize = 12;
+const MAX_NUM_RNA_NUCLEOTIDES: usize = 40;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Dna<'a>(&'a str);
 
-/// We derive [`Clone`] and [`Copy`]. That's why we have to purge any extra data after mutating
-/// operation(s). Otherwise we could have data leakage.
-#[derive(Default, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct Rna {
     // New to Rust? u8 type is an unsigned 8 bit integer, also used to represent a byte.
     rna: [u8; MAX_NUM_RNA_NUCLEOTIDES],
@@ -81,6 +79,17 @@ impl<'a> RnaTraitMut<'a> for Rna {
 
 impl<'a> RnaTraitMutLeakStorage<'a> for Rna {}
 
+impl Default for Rna {
+    fn default() -> Self {
+        Self {
+            rna: [0; MAX_NUM_RNA_NUCLEOTIDES],
+            len: 0,
+        }
+    }
+}
+
+/// We could also `#[derive(PartialEq)]`. It could be even more efficient than our implementation,
+/// because [`as_str`] validates UTF-8 first.
 impl PartialEq for Rna {
     fn eq(&self, other: &Self) -> bool {
         self.as_str() == other.as_str()
