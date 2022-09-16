@@ -1,0 +1,36 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "00_overview_navigation",
+  "steps": [
+    {
+      "file": "00_utils/src/lib.rs",
+      "description": "DnaTrait",
+      "line": 7,
+      "selection": {
+        "start": {
+          "line": 6,
+          "character": 1
+        },
+        "end": {
+          "line": 7,
+          "character": 5
+        }
+      }
+    },
+    {
+      "file": "00_utils/src/lib.rs",
+      "selection": {
+        "start": {
+          "line": 10,
+          "character": 5
+        },
+        "end": {
+          "line": 10,
+          "character": 44
+        }
+      },
+      "description": "`new(&dna)` transformation `DnaTrait` -> `RnaTrait`"
+    }
+  ],
+  "ref": "b7fe7752e0ecf36371127a7d10f49fadf616e8aa"
+}

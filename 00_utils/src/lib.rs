@@ -9,7 +9,8 @@ where
 {
     fn new(dna: &'a str) -> OurResult<Self>;
     /// The common practice is that `into_*` methods consume `self` (rather than taking it by
-    /// reference). However, it's OK to take by reference where possible - making the API more flexible.
+    /// reference). However, it's OK to take by reference where possible - making the API more
+    /// flexible.
     #[allow(clippy::wrong_self_convention)]
     fn into_rna(&self) -> Rna;
 }
