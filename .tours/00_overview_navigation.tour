@@ -29,8 +29,13 @@
           "character": 44
         }
       },
-      "description": "`new(&dna)` transformation `DnaTrait` -> `RnaTrait`"
+      "description": "`new(&dna)` construct `DnaTrait`"
+    },
+    {
+      "file": "00_utils/src/lib.rs",
+      "description": "transformation `DnaTrait` -> `RnaTrait`",
+      "line": 15
     }
   ],
-  "ref": "b7fe7752e0ecf36371127a7d10f49fadf616e8aa"
+  "ref": "3199fe740bd2375273b7e63ada3f184d27fbe5e0"
 }
