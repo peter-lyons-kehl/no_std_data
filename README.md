@@ -31,7 +31,7 @@ fields/functions. That's contrary to a general good practice of API design/docum
 this allows the reader to easily navigate to Rust API references (for example, by Ctrl+click in VS
 Code).
 
-# Exercism-specific
+# Exercism-specific disclaimer
 Two implementations required a minor change to its Exercism's tests.
 
 In order to upload this to Exercism, you'd need to
