@@ -42,8 +42,9 @@ pub fn dna_to_rna(dna_nucl: char) -> char {
     }
 }
 
-/// Iterate over `rna_iter` until its end. Transform its characters to UTF-8 and store them in `result`.
-/// Return number (length) of copied UTF-8 bytes. Panic if `result` doesn't have enough space.
+/// Iterate over `rna_iter` until its end. Transform its characters to UTF-8 and store them in
+/// `result`. Return number (length) of copied UTF-8 bytes. Panic if `result` doesn't have enough
+/// space.
 pub fn char_iter_to_bytes(result: &mut [u8], char_iter: impl Iterator<Item = char>) -> usize {
     let mut char_to_utf8 = [0u8; 4];
     let mut result_idx = 0usize;
