@@ -1,6 +1,7 @@
 {
   "$schema": "https://aka.ms/codetour-schema",
-  "title": "00_overview_navigation",
+  "title": "000_navigation",
+  "nextTour": "001_assignment",
   "steps": [
     {
       "file": "00_utils/src/lib.rs",
@@ -36,6 +37,5 @@
       "description": "transformation `DnaTrait` -> `RnaTrait`",
       "line": 15
     }
-  ],
-  "ref": "9a07288eb844ad6ed436f1dab40b353661cb8caa"
+  ]
 }
