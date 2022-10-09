@@ -19,7 +19,9 @@ pub type WithStorageLeakedCallBack<'a, RES: 'a> = &'a dyn Fn(&mut dyn Iterator<I
 pub type WithStorageLeaked<'a, RNA: RnaTraitMutLeakStorage<'a>, RES> =
     &'a dyn Fn(&RNA, WithStorageLeakedCallBack<'a, RES>) -> RES;
 
+// @TODO duplicate of 00_test_harness/src/api_tests_mut.rs
 /// A helper.
+#[allow(dead_code)] //@TODO
 #[cfg(test)]
 fn cga_modified_to_u<'a, R: RnaTraitMut<'a>>() -> R {
     let mut rna = R::new("CGA").expect("RNA");
@@ -27,6 +29,8 @@ fn cga_modified_to_u<'a, R: RnaTraitMut<'a>>() -> R {
     rna
 }
 
+// @TODO duplicate of 00_test_harness/src/api_tests_mut.rs
+#[allow(dead_code)] //@TODO
 /// A helper.
 #[cfg(test)]
 fn leaks_g_or_a<'a, R: RnaTraitMutLeakStorage<'a>>(

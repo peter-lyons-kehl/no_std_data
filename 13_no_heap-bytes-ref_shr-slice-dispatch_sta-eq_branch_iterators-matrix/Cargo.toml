@@ -1,9 +1,0 @@
-[package]
-edition = "2021"
-name = "no_heap-bytes-ref_shr-slice-dispatch_sta-eq_branch_iterators-matrix"
-version = "1.0.0"
-[dependencies]
-utils = { path = "../00_utils" }
-
-[dev-dependencies]
-test_harness = { path = "../00_test_harness" }

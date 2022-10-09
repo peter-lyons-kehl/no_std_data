@@ -1,0 +1,9 @@
+[package]
+edition = "2021"
+name = "coupled-seq-non_modify-trans-shr-ref-sta-eq_iter_to_specialized"
+version = "1.0.0"
+[dependencies]
+utils = { path = "../00_utils" }
+
+[dev-dependencies]
+test_harness = { path = "../00_test_harness" }

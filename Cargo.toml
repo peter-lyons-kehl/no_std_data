@@ -1,3 +1,3 @@
 [workspace]
-members = ["00_utils", "*_on_heap-*", "*_no_heap-*"]
+members = ["00_utils", "0*", "1*"]
 exclude = ["00_test_harness", "test_compile_on_stable"]

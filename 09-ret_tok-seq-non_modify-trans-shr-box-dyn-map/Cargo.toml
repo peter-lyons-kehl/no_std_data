@@ -1,0 +1,10 @@
+[package]
+edition = "2021"
+name = "ret_tok-seq-non_modify-trans-shr-box-dyn-map"
+version = "1.0.0"
+
+[dependencies]
+utils = { path = "../00_utils" }
+
+[dev-dependencies]
+test_harness = { path = "../00_test_harness" }

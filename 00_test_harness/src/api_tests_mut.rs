@@ -21,6 +21,7 @@ pub type WithStorageLeaked<'a, RNA: RnaTraitMutLeakStorage<'a>, RES> =
     &'a dyn Fn(&RNA, WithStorageLeakedCallBack<'a, RES>) -> RES;
 
 /// A helper.
+#[allow(dead_code)] //@TODO
 fn cga_modified_to_u<'a, R: RnaTraitMut<'a>>() -> R {
     let mut rna = R::new("CGA").expect("RNA");
     rna.set_from_iter(&mut "U".chars()).expect("success");
@@ -28,6 +29,7 @@ fn cga_modified_to_u<'a, R: RnaTraitMut<'a>>() -> R {
 }
 
 /// A helper.
+#[allow(dead_code)] //@TODO
 fn leaks_g_or_a<'a, R: RnaTraitMutLeakStorage<'a>>(
     rna: &R,
     with_storage_leaked: WithStorageLeaked<'a, R, bool>,

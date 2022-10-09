@@ -1,0 +1,9 @@
+[package]
+edition = "2021"
+name = "ret_tok-rnd-modify_any-store-mut-slc-pass_in_storage"
+version = "1.0.0"
+[dependencies]
+utils = { path = "../00_utils" }
+
+[dev-dependencies]
+test_harness = { path = "../00_test_harness" }
